@@ -1,0 +1,73 @@
+.weev-footer {
+  width: 100%;
+  background-color: #000000;
+  color: #FFFFFF;
+  padding: 24px 0;
+  margin-top: auto;
+}
+
+.weev-footer-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-logo-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.footer-copyright {
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.footer-divider {
+  color: #555555;
+}
+
+.footer-link {
+  color: #CCCCCC;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footer-link:hover {
+  color: #FFFFFF;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.currency-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #CCCCCC;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.currency-selector:hover {
+  color: #FFFFFF;
+}

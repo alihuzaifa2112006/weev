@@ -1,0 +1,126 @@
+.multi-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.multi-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.multi-select-trigger:hover {
+  border-color: #cbd5e1;
+}
+
+.multi-select-trigger.open {
+  border-color: #6366f1; /* Match the purple border in screenshot */
+  box-shadow: 0 0 0 1px #6366f1;
+}
+
+.multi-select-value.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+}
+
+.multi-select-icon {
+  color: #64748b;
+  transition: transform 0.2s;
+}
+
+.multi-select-icon.rotate {
+  transform: rotate(180deg);
+}
+
+.multi-select-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #6366f1; /* Purple border for dropdown too */
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.multi-select-search {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.multi-select-search input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+}
+
+.multi-select-search input:focus {
+  border-color: #6366f1;
+}
+
+.multi-select-options {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.multi-select-options::-webkit-scrollbar {
+  width: 6px;
+}
+.multi-select-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+.multi-select-options::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.multi-select-option {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.multi-select-option:hover {
+  background-color: #f1f5f9;
+}
+
+.multi-select-checkbox {
+  margin-right: 12px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #6366f1; /* To make the checkbox somewhat match the theme if supported */
+}
+
+.multi-select-option-text {
+  font-size: 14px;
+  color: #1e293b;
+  user-select: none;
+}
+
+.multi-select-empty {
+  padding: 12px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}

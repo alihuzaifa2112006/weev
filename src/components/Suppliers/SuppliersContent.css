@@ -1,0 +1,252 @@
+.suppliers-page-wrapper {
+  width: 100%;
+  background-color: #FAFAFA;
+  min-height: calc(100vh - 120px);
+  padding: 40px 0;
+}
+
+.suppliers-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* Header Section */
+.suppliers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.suppliers-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111111;
+  margin: 0;
+}
+
+.suppliers-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle-label {
+  font-size: 14px;
+  color: #111111;
+}
+
+.toggle-switch {
+  width: 44px;
+  height: 24px;
+  background-color: #000000;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-switch.active {
+  background-color: #D6E300;
+}
+
+.toggle-knob {
+  width: 18px;
+  height: 18px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s ease;
+}
+
+.toggle-switch.active .toggle-knob {
+  transform: translateX(20px);
+}
+
+/* Filters */
+.suppliers-filters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #E5E5E5;
+  margin-bottom: 32px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  color: #666666;
+}
+
+.filter-select {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* Toolbar */
+.suppliers-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.items-count {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111111;
+}
+
+.sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sort-label {
+  font-size: 13px;
+  color: #666666;
+}
+
+.sort-select {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+/* List */
+.suppliers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 40px;
+  color: #666666;
+}
+
+.supplier-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.supplier-card-header {
+  border-bottom: 1px solid #E5E5E5;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+
+.supplier-logo-placeholder {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111111;
+  background-color: #F3F4F6;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.supplier-card-body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+}
+
+.supplier-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.supplier-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111111;
+  margin: 0;
+}
+
+.supplier-desc {
+  font-size: 14px;
+  color: #666666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.supplier-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 24px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.detail-label {
+  color: #666666;
+}
+
+.detail-value {
+  font-weight: 700;
+  color: #111111;
+}
+
+/* Load More Button */
+.load-more-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  padding-bottom: 32px;
+}
+
+.load-more-btn {
+  background-color: transparent;
+  border: 1px solid #D1D5DB;
+  padding: 12px 32px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111111;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.load-more-btn:hover {
+  background-color: #F3F4F6;
+  border-color: #9CA3AF;
+}
