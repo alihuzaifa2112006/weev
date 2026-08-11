@@ -8,6 +8,7 @@ import AccountContent from './components/Account/AccountContent';
 import ProjectsContent from './components/Projects/ProjectsContent';
 import MaterialsContent from './components/Materials/MaterialsContent';
 import SuppliersContent from './components/Suppliers/SuppliersContent';
+import SupplierDetail from './components/Suppliers/SupplierDetail';
 import CartSidebar from './components/CartSidebar/CartSidebar';
 import Footer from './components/Footer/Footer';
 import { Loader2 } from 'lucide-react';
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="/projects" element={<ProjectsContent />} />
             <Route path="/materials" element={<MaterialsContent />} />
             <Route path="/suppliers" element={<SuppliersContent />} />
+            <Route path="/suppliers/:id" element={<SupplierDetail />} />
           </Routes>
         )}
       </main>

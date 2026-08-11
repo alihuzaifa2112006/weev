@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { decryptObjectKeys } from './api/getDecryption';
 import MultiSelectDropdown from './MultiSelectDropdown';
 import SingleSelectDropdown from './SingleSelectDropdown';
 import './SuppliersContent.css';
 
 export default function SuppliersContent() {
+  const navigate = useNavigate();
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -56,7 +58,7 @@ export default function SuppliersContent() {
       try {
         const apiUrl =
           import.meta.env.VITE_API_URL || 'https://svitchapi.swtcloud.net/mapi/';
-        const response = await fetch(`${apiUrl}GetPreOnboardListData`);
+        const response = await fetch(`${apiUrl}GetSupplierData?UserID=265`);
         const data = await response.json();
 
         if (!isMounted) return;
@@ -185,10 +187,12 @@ export default function SuppliersContent() {
             <div className="loading-state">No suppliers to show.</div>
           ) : (
             <>
-              {displayData.map((supplier) => (
+              {displayData.map((supplier, idx) => (
                 <div
                   className="supplier-card"
-                  key={supplier.VenderLibraryID || supplier.SupplierCode}
+                  key={supplier.VenderLibraryID || supplier.SupplierCode || idx}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => navigate(`/suppliers/${supplier.VenderLibraryID || idx}`, { state: { supplier } })}
                 >
                   <div className="supplier-card-header">
                     <div className="supplier-logo-placeholder">
