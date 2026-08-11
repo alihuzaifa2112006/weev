@@ -1,52 +1,76 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
-import './SingleSelectDropdown.css';
+import React from 'react';
+import { Select, MenuItem, FormControl } from '@mui/material';
 
 export default function SingleSelectDropdown({ options, selected, onSelect, placeholder }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSelect = (option) => {
-    onSelect(option);
-    setIsOpen(false);
-  };
-
-  const displayText = selected || placeholder || 'Select option';
-  const isPlaceholder = !selected && placeholder;
-
   return (
-    <div className="single-select-container" ref={dropdownRef}>
-      <div 
-        className={`single-select-trigger ${isOpen ? 'open' : ''} ${isPlaceholder ? 'is-placeholder' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
+    <FormControl fullWidth size="small">
+      <Select
+        displayEmpty
+        value={selected || ''}
+        onChange={(e) => onSelect(e.target.value)}
+        variant="outlined"
+        sx={{
+          borderRadius: '8px',
+          backgroundColor: '#ffffff',
+          fontSize: '14px',
+          color: selected ? '#09090b' : '#94a3b8',
+          fontWeight: selected ? 500 : 400,
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#e2e8f0',
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#cbd5e1',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#09090b',
+            borderWidth: '1px',
+          },
+          '& .MuiSelect-select': {
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          '& .MuiSvgIcon-root': {
+            color: '#64748b',
+          },
+        }}
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              borderRadius: '8px',
+              marginTop: '6px',
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06)',
+              maxHeight: 260,
+              '& .MuiMenuItem-root': {
+                fontSize: '14px',
+                padding: '10px 16px',
+                color: '#09090b',
+                '&:hover': {
+                  backgroundColor: '#f8fafc',
+                },
+                '&.Mui-selected': {
+                  backgroundColor: '#f1f5f9',
+                  fontWeight: 600,
+                  '&:hover': {
+                    backgroundColor: '#f1f5f9',
+                  },
+                },
+              },
+            },
+          },
+        }}
       >
-        <span className="single-select-value">{displayText}</span>
-        <ChevronDown size={18} className={`single-select-icon ${isOpen ? 'rotate' : ''}`} />
-      </div>
-
-      {isOpen && (
-        <div className="single-select-dropdown">
-          {options.map((option, index) => (
-            <div 
-              key={index} 
-              className={`single-select-option ${selected === option ? 'selected' : ''}`}
-              onClick={() => handleSelect(option)}
-            >
-              <span>{option}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+        {placeholder && (
+          <MenuItem value="" disabled>
+            <span style={{ color: '#94a3b8' }}>{placeholder}</span>
+          </MenuItem>
+        )}
+        {options.map((option, index) => (
+          <MenuItem key={index} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 }

@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown } from 'lucide-react';
+import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown, Calendar, FolderPlus } from 'lucide-react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 import { decryptObjectKeys } from '../../api/encryption';
 import SingleSelectDropdown from './SingleSelectDropdown';
 import './SupplierDetail.css';
@@ -74,8 +78,37 @@ export default function SupplierDetail() {
     }
   }, [supplier]);
 
-  const handleEmpFormChange = (key, value) => {
-    setEmpForm((prev) => ({ ...prev, [key]: value }));
+  const [certForm, setCertForm] = useState({
+    document: '',
+    description: '',
+    validityFrom: '',
+    validityTo: '',
+    file: null,
+  });
+
+  const [certificatesList, setCertificatesList] = useState([]);
+  const fileInputRef = useRef(null);
+
+  const handleCertAdd = () => {
+    if (!certForm.document && !certForm.description) return;
+    setCertificatesList((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        certificate: certForm.document || 'Certificate',
+        description: certForm.description || '-',
+        validityFrom: certForm.validityFrom || '-',
+        validityTo: certForm.validityTo || '-',
+        fileName: certForm.file ? certForm.file.name : 'Document.pdf',
+      },
+    ]);
+    setCertForm({
+      document: '',
+      description: '',
+      validityFrom: '',
+      validityTo: '',
+      file: null,
+    });
   };
 
   if (loading) {
@@ -131,7 +164,7 @@ export default function SupplierDetail() {
 
       {/* Secondary Navigation Tabs */}
       <div className="supplier-nav-tabs">
-        {['Overview', 'Catalog', 'Team', 'Contact', 'Employees Details'].map((tab) => (
+        {['Overview', 'Catalog', 'Team', 'Contact', 'Employees Details', 'Certificates and Patents'].map((tab) => (
           <button
             key={tab}
             className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
@@ -408,8 +441,217 @@ export default function SupplierDetail() {
         </div>
       )}
 
+      {/* Tab Content: Certificates and Patents */}
+      {activeTab === 'Certificates and Patents' && (
+        <div className="cert-tab-content">
+          <p className="cert-subtext">
+            Please upload all the certificates and patents the company has obtained:
+          </p>
+
+          <div className="cert-top-layout">
+            {/* Left Form Side */}
+            <div className="cert-form-side">
+              <div className="cert-form-row">
+                <div className="cert-field-group">
+                  <label className="emp-field-label">
+                    Document <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={[
+                      'ISO 14001',
+                      'ISO 45001 (formerly OHSAS 18001)',
+                      'SA8000 (Social Accountability 8000)',
+                      'WRAP',
+                      'BSCI (Business Social Compliance Initiative)',
+                      'ETI (Ethical Trading Initiative)',
+                      'Sedex (Supplier Ethical Data Exchange)',
+                      'ISO 9001:2015 Quality Management',
+                      'Leather Working Group - Gold Certified',
+                      'OEKO-TEX Standard 100',
+                      'Global Organic Textile Standard (GOTS)'
+                    ]}
+                    selected={certForm.document}
+                    placeholder="Select Document"
+                    onSelect={(val) => setCertForm((prev) => ({ ...prev, document: val }))}
+                  />
+                </div>
+
+                <div className="cert-field-group">
+                  <label className="emp-field-label">Description (if others)</label>
+                  <input
+                    type="text"
+                    className="cert-input-element"
+                    placeholder="Certificate Description"
+                    value={certForm.description}
+                    onChange={(e) => setCertForm((prev) => ({ ...prev, description: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <div className="cert-form-row">
+                  <div className="cert-field-group">
+                    <label className="emp-field-label">
+                      Validity From <span className="required-star">*</span>
+                    </label>
+                    <DatePicker
+                      format="DD/MM/YYYY"
+                      value={certForm.validityFrom ? dayjs(certForm.validityFrom, 'DD/MM/YYYY') : null}
+                      onChange={(newValue) => {
+                        setCertForm((prev) => ({
+                          ...prev,
+                          validityFrom: newValue && newValue.isValid() ? newValue.format('DD/MM/YYYY') : '',
+                        }));
+                      }}
+                      slotProps={{
+                        textField: {
+                          placeholder: 'DD/MM/YYYY',
+                          fullWidth: true,
+                          size: 'small',
+                          sx: {
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: '8px',
+                              backgroundColor: '#ffffff',
+                              fontSize: '14px',
+                              '& fieldset': {
+                                borderColor: '#e2e8f0',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#cbd5e1',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: '#09090b',
+                                borderWidth: '1px',
+                              },
+                              '& input': {
+                                padding: '12px 16px',
+                              },
+                            },
+                            '& .MuiSvgIcon-root': {
+                              color: '#64748b',
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+
+                  <div className="cert-field-group">
+                    <label className="emp-field-label">
+                      Validity To <span className="required-star">*</span>
+                    </label>
+                    <DatePicker
+                      format="DD/MM/YYYY"
+                      value={certForm.validityTo ? dayjs(certForm.validityTo, 'DD/MM/YYYY') : null}
+                      onChange={(newValue) => {
+                        setCertForm((prev) => ({
+                          ...prev,
+                          validityTo: newValue && newValue.isValid() ? newValue.format('DD/MM/YYYY') : '',
+                        }));
+                      }}
+                      slotProps={{
+                        textField: {
+                          placeholder: 'DD/MM/YYYY',
+                          fullWidth: true,
+                          size: 'small',
+                          sx: {
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: '8px',
+                              backgroundColor: '#ffffff',
+                              fontSize: '14px',
+                              '& fieldset': {
+                                borderColor: '#e2e8f0',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#cbd5e1',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: '#09090b',
+                                borderWidth: '1px',
+                              },
+                              '& input': {
+                                padding: '12px 16px',
+                              },
+                            },
+                            '& .MuiSvgIcon-root': {
+                              color: '#64748b',
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                </div>
+              </LocalizationProvider>
+            </div>
+
+            {/* Right Upload Card Side */}
+            <div className="cert-upload-side">
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setCertForm((prev) => ({ ...prev, file: e.target.files[0] }));
+                  }
+                }}
+              />
+              <div
+                className="cert-dropzone-box"
+                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+              >
+                <div className="cert-illustration-circle">
+                  <FolderPlus size={40} color="#2563eb" />
+                </div>
+                <h4 className="cert-dropzone-title">
+                  {certForm.file ? certForm.file.name : 'Drop or Select file'}
+                </h4>
+                <p className="cert-dropzone-subtext">
+                  Drop files here or click <span className="cert-browse-link">browse</span> thorough your machine
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Add Button */}
+          <div className="cert-add-btn-wrapper">
+            <button className="cert-add-button" onClick={handleCertAdd}>
+              Add
+            </button>
+          </div>
+
+          {/* Table Footer Bar */}
+          <div className="cert-table-container">
+            <div className="cert-table-header-bar">
+              <div className="cert-col">Certificate</div>
+              <div className="cert-col">Description</div>
+              <div className="cert-col">Validity from</div>
+              <div className="cert-col">To</div>
+              <div className="cert-col">File</div>
+            </div>
+
+            <div className="cert-table-body-list">
+              {certificatesList.length === 0 ? (
+                <div className="cert-table-empty-row">No certificates added yet.</div>
+              ) : (
+                certificatesList.map((item) => (
+                  <div className="cert-table-row-item" key={item.id}>
+                    <div className="cert-col font-bold">{item.certificate}</div>
+                    <div className="cert-col">{item.description}</div>
+                    <div className="cert-col">{item.validityFrom}</div>
+                    <div className="cert-col">{item.validityTo}</div>
+                    <div className="cert-col cert-file-link">{item.fileName}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tab Content for Catalog */}
-      {activeTab !== 'Overview' && activeTab !== 'Contact' && activeTab !== 'Team' && activeTab !== 'Employees Details' && (
+      {activeTab !== 'Overview' && activeTab !== 'Contact' && activeTab !== 'Team' && activeTab !== 'Employees Details' && activeTab !== 'Certificates and Patents' && (
         <div className="tab-placeholder-content">
           <h3>{activeTab} Section</h3>
           <p>Detailed {activeTab.toLowerCase()} information for {name} will be displayed here.</p>
