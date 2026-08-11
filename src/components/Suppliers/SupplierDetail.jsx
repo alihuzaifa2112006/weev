@@ -1017,17 +1017,7 @@ export default function SupplierDetail() {
                   />
                 </div>
 
-                {/* Field 2: Vendor */}
-                <div className="gps-field-group">
-                  <label className="emp-field-label">Vendor</label>
-                  <SingleSelectDropdown
-                    options={['AL AWAN (24)', 'LE FARC (10)', 'SWT VENDOR (15)']}
-                    selected={gpsForm.vendor}
-                    onSelect={(val) => setGpsForm((prev) => ({ ...prev, vendor: val }))}
-                  />
-                </div>
-
-                {/* Field 3: Address */}
+                {/* Field 2: Address */}
                 <div className="gps-field-group">
                   <label className="emp-field-label">Address</label>
                   <textarea
