@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown, Calendar, FolderPlus } from 'lucide-react';
+import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown, Calendar, FolderPlus, UploadCloud } from 'lucide-react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -77,6 +77,18 @@ export default function SupplierDetail() {
       }));
     }
   }, [supplier]);
+
+  const [setupForm, setSetupForm] = useState({
+    capacityPerMonth: supplier?.Capacity || '100',
+    capacityUnit: 'KG',
+    turnoverPerYear: supplier?.Annualturnover || '100',
+    turnoverUnit: 'EURO',
+    businessLicenseNo: supplier?.BusinessLicenseNumber || '2001',
+    licenseFile: null,
+    additionalInfo: '',
+  });
+
+  const licenseFileInputRef = useRef(null);
 
   const [certForm, setCertForm] = useState({
     document: '',
@@ -164,7 +176,7 @@ export default function SupplierDetail() {
 
       {/* Secondary Navigation Tabs */}
       <div className="supplier-nav-tabs">
-        {['Overview', 'Catalog', 'Team', 'Contact', 'Employees Details', 'Certificates and Patents'].map((tab) => (
+        {['Overview', 'Catalog', 'Team', 'Setup Details', 'Contact', 'Employees Details', 'Certificates and Patents'].map((tab) => (
           <button
             key={tab}
             className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
@@ -337,6 +349,119 @@ export default function SupplierDetail() {
         </div>
       )}
 
+      {/* Tab Content: Setup Details */}
+      {activeTab === 'Setup Details' && (
+        <div className="setup-tab-content">
+          <div className="setup-card">
+            <h2 className="setup-title">Setup Details</h2>
+
+            <div className="setup-form-grid">
+              {/* Row 1: Capacity & Turnover */}
+              <div className="setup-form-row">
+                {/* Field 1: Capacity per Month */}
+                <div className="setup-field-group">
+                  <label className="emp-field-label">
+                    Capacity per Month <span className="required-star">*</span>{' '}
+                    <span className="setup-sub-label">(Please select the appropriate unit for your product)</span>
+                  </label>
+                  <div className="setup-input-unit-group">
+                    <input
+                      type="text"
+                      className="setup-input-main"
+                      value={setupForm.capacityPerMonth}
+                      onChange={(e) => setSetupForm((prev) => ({ ...prev, capacityPerMonth: e.target.value }))}
+                    />
+                    <div className="setup-unit-dropdown-wrapper">
+                      <label className="setup-unit-label">Unit</label>
+                      <SingleSelectDropdown
+                        options={['KG', 'SF', 'Meters', 'Pieces', 'Tons']}
+                        selected={setupForm.capacityUnit}
+                        onSelect={(val) => setSetupForm((prev) => ({ ...prev, capacityUnit: val }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Field 2: Turnover per year */}
+                <div className="setup-field-group">
+                  <label className="emp-field-label">
+                    Turnover per year <span className="required-star">*</span>
+                  </label>
+                  <div className="setup-input-unit-group">
+                    <input
+                      type="text"
+                      className="setup-input-main"
+                      value={setupForm.turnoverPerYear}
+                      onChange={(e) => setSetupForm((prev) => ({ ...prev, turnoverPerYear: e.target.value }))}
+                    />
+                    <div className="setup-unit-dropdown-wrapper">
+                      <label className="setup-unit-label">Unit</label>
+                      <SingleSelectDropdown
+                        options={['EURO', 'USD', 'GBP', 'INR', 'PKR']}
+                        selected={setupForm.turnoverUnit}
+                        onSelect={(val) => setSetupForm((prev) => ({ ...prev, turnoverUnit: val }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2: Business License No. */}
+              <div className="setup-form-row full-width">
+                <div className="setup-field-group full-width">
+                  <label className="emp-field-label">
+                    Business License No. <span className="required-star">*</span>
+                  </label>
+                  <div className="setup-license-input-wrapper">
+                    <input
+                      type="text"
+                      className="setup-input-main flex-1"
+                      value={setupForm.businessLicenseNo}
+                      onChange={(e) => setSetupForm((prev) => ({ ...prev, businessLicenseNo: e.target.value }))}
+                    />
+                    <input
+                      type="file"
+                      ref={licenseFileInputRef}
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setSetupForm((prev) => ({ ...prev, licenseFile: e.target.files[0] }));
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="setup-upload-btn"
+                      onClick={() => licenseFileInputRef.current && licenseFileInputRef.current.click()}
+                      title="Upload Business License Document"
+                    >
+                      <UploadCloud size={20} color="#09090b" />
+                    </button>
+                  </div>
+                  {setupForm.licenseFile && (
+                    <span className="setup-uploaded-filename">{setupForm.licenseFile.name}</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Row 3: Additional Info */}
+              <div className="setup-form-row full-width">
+                <div className="setup-field-group full-width">
+                  <label className="emp-field-label">Additional Info</label>
+                  <textarea
+                    className="setup-textarea-element"
+                    placeholder="Additional Info.."
+                    rows={4}
+                    value={setupForm.additionalInfo}
+                    onChange={(e) => setSetupForm((prev) => ({ ...prev, additionalInfo: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tab Content: Employees Details */}
       {activeTab === 'Employees Details' && (
         <div className="employees-tab-content">
@@ -504,6 +629,14 @@ export default function SupplierDetail() {
                         }));
                       }}
                       slotProps={{
+                        popper: {
+                          sx: {
+                            '& .MuiPickersDay-root.Mui-selected': {
+                              backgroundColor: '#09090b !important',
+                              color: '#ffffff !important',
+                            },
+                          },
+                        },
                         textField: {
                           placeholder: 'DD/MM/YYYY',
                           fullWidth: true,
@@ -550,6 +683,14 @@ export default function SupplierDetail() {
                         }));
                       }}
                       slotProps={{
+                        popper: {
+                          sx: {
+                            '& .MuiPickersDay-root.Mui-selected': {
+                              backgroundColor: '#09090b !important',
+                              color: '#ffffff !important',
+                            },
+                          },
+                        },
                         textField: {
                           placeholder: 'DD/MM/YYYY',
                           fullWidth: true,
@@ -602,7 +743,7 @@ export default function SupplierDetail() {
                 onClick={() => fileInputRef.current && fileInputRef.current.click()}
               >
                 <div className="cert-illustration-circle">
-                  <FolderPlus size={40} color="#2563eb" />
+                  <FolderPlus size={40} color="#09090b" />
                 </div>
                 <h4 className="cert-dropzone-title">
                   {certForm.file ? certForm.file.name : 'Drop or Select file'}
