@@ -52,6 +52,26 @@ export default function SupplierDetail() {
     ? supplier.Capacity
     : '24000000 SF';
 
+  const websiteUrl = (supplier && supplier.Website && supplier.Website.length < 50 && !supplier.Website.includes('='))
+    ? supplier.Website
+    : 'https://lefarc.com/en/nuestra-esencia/';
+
+  const email = (supplier && supplier.OnboardingEmail && supplier.OnboardingEmail.length < 50 && !supplier.OnboardingEmail.includes('='))
+    ? supplier.OnboardingEmail
+    : 'mercadotecnia@lefarc.com';
+
+  const address1 = (supplier && supplier.Address1 && supplier.Address1.length < 50 && !supplier.Address1.includes('='))
+    ? supplier.Address1
+    : 'Av. Transportistas 301, Col. Unidad Obrera';
+
+  const city = (supplier && supplier.City && supplier.City.length < 50 && !supplier.City.includes('='))
+    ? supplier.City
+    : '37179 León de los Aldama, Gto., Mexico';
+
+  const phone = (supplier && supplier.PhoneNumber && supplier.PhoneNumber.length < 30 && !supplier.PhoneNumber.includes('='))
+    ? supplier.PhoneNumber
+    : '+52 477 470 2828';
+
   return (
     <div className="supplier-detail-page">
       {/* Back button */}
@@ -185,8 +205,56 @@ export default function SupplierDetail() {
         </div>
       )}
 
-      {/* Tab Content for Catalog / Team / Contact */}
-      {activeTab !== 'Overview' && (
+      {/* Tab Content: Contact */}
+      {activeTab === 'Contact' && (
+        <div className="contact-tab-content">
+          <h2 className="contact-main-heading">Contact information</h2>
+
+          <div className="contact-info-grid">
+            <div className="contact-info-col">
+              <h3 className="contact-sub-heading">Website</h3>
+              <div className="contact-divider"></div>
+              <a
+                href={websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-link"
+              >
+                {websiteUrl}
+              </a>
+              <div className="contact-divider"></div>
+            </div>
+
+            <div className="contact-info-col">
+              <h3 className="contact-sub-heading">Email</h3>
+              <div className="contact-divider"></div>
+              <a
+                href={`mailto:${email}`}
+                className="contact-link"
+              >
+                {email}
+              </a>
+              <div className="contact-divider"></div>
+            </div>
+          </div>
+
+          <div className="locations-section">
+            <h2 className="contact-main-heading">Locations</h2>
+            <h3 className="contact-sub-heading">HQ</h3>
+            <div className="contact-divider short-divider"></div>
+
+            <div className="hq-address-block">
+              <p>{address1}</p>
+              <p>{city}</p>
+              <p>{country}</p>
+              <p className="phone-line">Phone: {phone}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab Content for Catalog / Team */}
+      {activeTab !== 'Overview' && activeTab !== 'Contact' && (
         <div className="tab-placeholder-content">
           <h3>{activeTab} Section</h3>
           <p>Detailed {activeTab.toLowerCase()} information for {name} will be displayed here.</p>

@@ -68,6 +68,7 @@ export default function SuppliersContent() {
           Array.isArray(data.ServiceRes)
         ) {
           const decryptedList = decryptObjectKeys(data.ServiceRes);
+          console.log(decryptedList);
           setSuppliers(decryptedList);
         } else {
           setError(data.ResponseMessage || 'Could not load suppliers.');
