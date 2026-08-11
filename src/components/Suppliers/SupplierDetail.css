@@ -1,6 +1,6 @@
 .supplier-detail-page {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 16px 24px 60px;
   background-color: #ffffff;
@@ -354,8 +354,8 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  max-width: 900px;
-  padding-left: 24px;
+  width: 100%;
+  padding: 8px 24px 32px;
 }
 
 .contact-main-heading {
@@ -970,4 +970,553 @@
 .setup-textarea-element:focus {
   border-color: #09090b;
   box-shadow: 0 0 0 2px rgba(9, 9, 11, 0.05);
+}
+
+/* General Contact Information Table Layout with MUI TextFields */
+.general-contacts-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-top: 32px;
+  width: 100%;
+}
+
+.general-contacts-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #09090b;
+  margin: 0 0 20px 0;
+}
+
+.general-contacts-table-wrapper {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.general-contacts-table-header {
+  display: grid;
+  grid-template-columns: 2.2fr 1.6fr 1.4fr 1.6fr 2.2fr 50px;
+  width: 100%;
+  padding: 14px 18px;
+  background-color: #f8fafc;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.gc-th {
+  display: flex;
+  align-items: center;
+}
+
+.gc-th.gc-actions-th {
+  justify-content: center;
+}
+
+.general-contacts-table-body {
+  background-color: #ffffff;
+  width: 100%;
+}
+
+.general-contacts-table-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1.6fr 1.4fr 1.6fr 2.2fr 50px;
+  width: 100%;
+  padding: 12px 18px;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.general-contacts-table-row:last-child {
+  border-bottom: none;
+}
+
+.gc-td {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.gc-td.gc-actions-td {
+  justify-content: center;
+}
+
+.gc-trash-btn {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.gc-trash-btn:hover {
+  background-color: #fef2f2;
+}
+
+.gc-empty-row {
+  padding: 28px 18px;
+  text-align: center;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.gc-add-row-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 18px;
+  background-color: #ffffff;
+  border-top: 1px solid #f1f5f9;
+}
+
+.gc-add-more-btn {
+  background-color: #09090b;
+  color: #ffffff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gc-add-more-btn:hover {
+  background-color: #18181b;
+  opacity: 0.9;
+}
+
+/* GPS Tab Styles */
+.gps-tab-content {
+  width: 100%;
+}
+
+.gps-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.gps-card-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.gps-header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gps-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #09090b;
+  margin: 0;
+}
+
+.gps-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.gps-left-map-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.gps-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.gps-search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.gps-search-icon {
+  color: #94a3b8;
+}
+
+.gps-search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #09090b;
+}
+
+.gps-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.gps-google-badge {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+}
+
+.gps-map-frame-wrapper {
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.gps-map-footer-note {
+  font-size: 13px;
+  color: #64748b;
+  margin: 4px 0 0 0;
+}
+
+.gps-right-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.gps-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gps-textarea-element {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #09090b;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.gps-textarea-element:focus {
+  border-color: #09090b;
+  box-shadow: 0 0 0 2px rgba(9, 9, 11, 0.05);
+}
+
+.gps-field-row-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.gps-field-row-three {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.gps-radius-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gps-radius-badge {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  padding: 0 4px;
+}
+
+.gps-bottom-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.gps-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gps-cancel-btn:hover {
+  background: #f8fafc;
+  color: #09090b;
+}
+
+.gps-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #09090b;
+  border: none;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gps-save-btn:hover {
+  background: #18181b;
+  opacity: 0.95;
+}
+
+/* Material Supplier Tab Styles */
+.material-supplier-tab-content {
+  width: 100%;
+}
+
+.material-supplier-header {
+  margin-bottom: 24px;
+}
+
+.material-supplier-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #09090b;
+  margin: 0 0 6px 0;
+}
+
+.material-supplier-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.material-supplier-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mat-sup-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px 28px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.mat-sup-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.mat-sup-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.mat-sup-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mat-sup-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mat-sup-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #09090b;
+  margin: 0;
+}
+
+.mat-sup-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mat-sup-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 32px;
+}
+
+.mat-sup-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.mat-sup-item-icon {
+  color: #64748b;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.mat-sup-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.mat-sup-val {
+  font-size: 14px;
+  font-weight: 500;
+  color: #09090b;
+  margin: 0;
+}
+
+.mat-sup-link {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.mat-sup-link:hover {
+  text-decoration: underline;
+}
+
+/* Expanded Specs Section */
+.mat-sup-expanded-content {
+  margin-top: 20px;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+.mat-sup-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin-bottom: 20px;
+}
+
+.mat-sup-expanded-heading {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mat-sup-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.mat-sup-spec-box {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mat-sup-spec-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.mat-sup-spec-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: #09090b;
+}
+
+.mat-sup-spec-val.highlight-green {
+  color: #166534;
+}
+
+/* Card Footer: Expand Button */
+.mat-sup-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.mat-sup-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  color: #09090b;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mat-sup-expand-btn:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

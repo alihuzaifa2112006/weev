@@ -1,13 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown, Calendar, FolderPlus, UploadCloud } from 'lucide-react';
+import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown, Calendar, FolderPlus, UploadCloud, Trash2, MapPin, Search, X, CheckCircle, ChevronUp, Building2, Phone } from 'lucide-react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TextField } from '@mui/material';
 import dayjs from 'dayjs';
 import { decryptObjectKeys } from '../../api/encryption';
 import SingleSelectDropdown from './SingleSelectDropdown';
 import './SupplierDetail.css';
+
+const muiTextFieldSx = {
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '8px',
+    backgroundColor: '#ffffff',
+    fontSize: '14px',
+    '& fieldset': {
+      borderColor: '#e2e8f0',
+    },
+    '&:hover fieldset': {
+      borderColor: '#cbd5e1',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#09090b',
+      borderWidth: '1px',
+    },
+    '& input': {
+      padding: '10px 14px',
+    },
+  },
+};
 
 export default function SupplierDetail() {
   const { id } = useParams();
@@ -103,6 +125,138 @@ export default function SupplierDetail() {
 
   const licenseFileInputRef = useRef(null);
 
+  const [gpsForm, setGpsForm] = useState({
+    searchQuery: '',
+    factoryName: supplier?.VenderName || 'Hong Kong Industrial Trading Corp',
+    vendor: supplier?.ShortName ? `${supplier.ShortName} (24)` : 'HONG KONG VENDOR (24)',
+    address: [supplier?.Address1, supplier?.Address2, supplier?.City, supplier?.CountryName].filter(Boolean).join(', ') || '30 Canton Road, Tsim Sha Tsui, Kowloon, Hong Kong',
+    city: supplier?.City || 'HONG KONG',
+    branch: 'Kowloon Branch',
+    latitude: '22.319303',
+    longitude: '114.169361',
+    radius: '500',
+  });
+
+  const [expandedSuppliers, setExpandedSuppliers] = useState({});
+
+  const toggleExpandSupplier = (index) => {
+    setExpandedSuppliers((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const materialSuppliersList = [
+    {
+      name: 'Pacific Leather & Raw Materials Co.',
+      verified: true,
+      address: 'Block B, 14/F, Kwai Hing Industrial Building, Hong Kong',
+      city: 'Hong Kong',
+      contactPerson: 'David Zhang',
+      phone: '+852 9123-4567',
+      email: 'david.zhang@pacificleather.hk',
+      details: {
+        materialType: 'Top Grain Cowhide, Lambskin & Goat Leather',
+        capacity: '50,000 SF / Month',
+        moq: '1,000 SF',
+        leadTime: '14 - 21 Days',
+        qualityCert: 'ISO 9001:2015, LWG Gold Rated',
+        paymentTerms: '30% Deposit, 70% LC at sight',
+      },
+    },
+    {
+      name: 'Sialkot Tanning & Chemical Supplies',
+      verified: true,
+      address: 'Plot 45, Small Industrial Estate, Sialkot, Pakistan',
+      city: 'Sialkot',
+      contactPerson: 'Muhammad Usman',
+      phone: '+92 300 8765432',
+      email: 'usman@sialkottanning.com',
+      details: {
+        materialType: 'Eco-Friendly Tanning Dyes & Finishing Agents',
+        capacity: '200 Tons / Month',
+        moq: '5 Tons',
+        leadTime: '7 - 10 Days',
+        qualityCert: 'OEKO-TEX Standard 100, REACH Compliant',
+        paymentTerms: 'Net 30 Days',
+      },
+    },
+    {
+      name: 'Milano Hardware & Zipper Fittings Ltd.',
+      verified: true,
+      address: 'Via Industriale 88, 20121 Milano, Italy',
+      city: 'Milan',
+      contactPerson: 'Marco Rossi',
+      phone: '+39 02 5544 3322',
+      email: 'm.rossi@milanohardware.it',
+      details: {
+        materialType: 'Brass Buckles, Metal Rivets & YKK Metal Zippers',
+        capacity: '500,000 Pcs / Month',
+        moq: '5,000 Pcs',
+        leadTime: '10 - 15 Days',
+        qualityCert: 'ISO 14001, RoHS Compliant',
+        paymentTerms: 'TT Bank Transfer',
+      },
+    },
+  ];
+
+  const storageKey = `supplier_contacts_${id || 'default'}`;
+
+  const [generalContacts, setGeneralContacts] = useState(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error("Failed to load contacts from localStorage", e);
+    }
+    return [
+      {
+        id: '1',
+        contactType: 'BUSINESS REPRESENTATIVE',
+        name: 'Lucinda Lee',
+        jobTitle: '-',
+        mobileNumber: '852 2369-4734',
+        email: 'lucindalee@ivt-hk.com',
+      },
+    ];
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(generalContacts));
+    } catch (e) {
+      console.error("Failed to save contacts to localStorage", e);
+    }
+  }, [generalContacts, storageKey]);
+
+  const handleContactChange = (index, field, value) => {
+    setGeneralContacts((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const handleAddContact = () => {
+    setGeneralContacts((prev) => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        contactType: 'BUSINESS REPRESENTATIVE',
+        name: '',
+        jobTitle: '',
+        mobileNumber: '',
+        email: '',
+      },
+    ]);
+  };
+
+  const handleDeleteContact = (index) => {
+    setGeneralContacts((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const [certForm, setCertForm] = useState({
     document: '',
     description: '',
@@ -189,7 +343,7 @@ export default function SupplierDetail() {
 
       {/* Secondary Navigation Tabs */}
       <div className="supplier-nav-tabs">
-        {['Overview', 'Catalog', 'Team', 'Setup Details', 'Contact', 'Employees Details', 'Certificates and Patents'].map((tab) => (
+        {['Overview', 'Catalog', 'Team', 'Setup Details', 'GPS', 'Material Supplier', 'Certificates and Patents', 'Contact'].map((tab) => (
           <button
             key={tab}
             className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
@@ -317,6 +471,113 @@ export default function SupplierDetail() {
                 <span className="contact-empty-text">-</span>
               )}
               <div className="contact-divider"></div>
+            </div>
+          </div>
+
+          {/* General Contact Information Section */}
+          <div className="general-contacts-card">
+            <h2 className="general-contacts-title">General Contact Information</h2>
+
+            <div className="general-contacts-table-wrapper">
+              <div className="general-contacts-table-header">
+                <div className="gc-th">Contact Type</div>
+                <div className="gc-th">Name</div>
+                <div className="gc-th">Job Title</div>
+                <div className="gc-th">Mobile Number</div>
+                <div className="gc-th">Email</div>
+                <div className="gc-th gc-actions-th">Actions</div>
+              </div>
+
+              <div className="general-contacts-table-body">
+                {generalContacts.length === 0 ? (
+                  <div className="gc-empty-row">No contacts added yet. Click "Add More" below.</div>
+                ) : (
+                  generalContacts.map((contact, index) => (
+                    <div className="general-contacts-table-row" key={contact.id || index}>
+                      {/* Contact Type */}
+                      <div className="gc-td">
+                        <SingleSelectDropdown
+                          options={['BUSINESS REPRESENTATIVE', 'SALES MANAGER', 'TECHNICAL SUPPORT', 'ACCOUNTING', 'GENERAL']}
+                          selected={contact.contactType}
+                          placeholder="Select Contact Type"
+                          onSelect={(val) => handleContactChange(index, 'contactType', val)}
+                        />
+                      </div>
+
+                      {/* Name */}
+                      <div className="gc-td">
+                        <TextField
+                          size="small"
+                          placeholder="Name"
+                          value={contact.name}
+                          onChange={(e) => handleContactChange(index, 'name', e.target.value)}
+                          fullWidth
+                          sx={muiTextFieldSx}
+                        />
+                      </div>
+
+                      {/* Job Title */}
+                      <div className="gc-td">
+                        <TextField
+                          size="small"
+                          placeholder="Job Title"
+                          value={contact.jobTitle}
+                          onChange={(e) => handleContactChange(index, 'jobTitle', e.target.value)}
+                          fullWidth
+                          sx={muiTextFieldSx}
+                        />
+                      </div>
+
+                      {/* Mobile Number */}
+                      <div className="gc-td">
+                        <TextField
+                          size="small"
+                          placeholder="Mobile Number"
+                          value={contact.mobileNumber}
+                          onChange={(e) => handleContactChange(index, 'mobileNumber', e.target.value)}
+                          fullWidth
+                          sx={muiTextFieldSx}
+                        />
+                      </div>
+
+                      {/* Email */}
+                      <div className="gc-td">
+                        <TextField
+                          size="small"
+                          type="email"
+                          placeholder="Email"
+                          value={contact.email}
+                          onChange={(e) => handleContactChange(index, 'email', e.target.value)}
+                          fullWidth
+                          sx={muiTextFieldSx}
+                        />
+                      </div>
+
+                      {/* Actions */}
+                      <div className="gc-td gc-actions-td">
+                        <button
+                          type="button"
+                          className="gc-trash-btn"
+                          onClick={() => handleDeleteContact(index)}
+                          title="Delete Contact"
+                        >
+                          <Trash2 size={18} color="#ef4444" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="gc-add-row-footer">
+                <button
+                  type="button"
+                  className="gc-add-more-btn"
+                  onClick={handleAddContact}
+                >
+                  Add More
+                </button>
+              </div>
             </div>
           </div>
 
@@ -470,118 +731,400 @@ export default function SupplierDetail() {
                   />
                 </div>
               </div>
+
+              {/* Row 4: Employees & Business Details Grid */}
+              <div className="emp-fields-grid" style={{ marginTop: '16px' }}>
+                {/* Field 1: No. of Employee */}
+                <div className="emp-field-group">
+                  <label className="emp-field-label">
+                    No. of Employee <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={['Under 50', '50 - 100', '100 - 500', 'Over 500']}
+                    selected={empForm.noOfEmployees}
+                    placeholder="Select No. of Employee"
+                    onSelect={(val) => setEmpForm((prev) => ({ ...prev, noOfEmployees: val }))}
+                  />
+                </div>
+
+                {/* Field 2: % of Export Business */}
+                <div className="emp-field-group">
+                  <label className="emp-field-label">
+                    % of Export Business <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={['0%', '10% - 25%', '25% - 50%', 'Over 50%']}
+                    selected={empForm.exportBusinessPct}
+                    placeholder="Select % of Export Business"
+                    onSelect={(val) => setEmpForm((prev) => ({ ...prev, exportBusinessPct: val }))}
+                  />
+                </div>
+
+                {/* Field 3: Experience in Business Type */}
+                <div className="emp-field-group">
+                  <label className="emp-field-label">
+                    Experience in Business Type <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10 Years']}
+                    selected={empForm.experienceInBusiness}
+                    placeholder="Select Experience in Business"
+                    onSelect={(val) => setEmpForm((prev) => ({ ...prev, experienceInBusiness: val }))}
+                  />
+                </div>
+
+                {/* Field 4: % of Business in Europe */}
+                <div className="emp-field-group">
+                  <label className="emp-field-label">
+                    % of Business in Europe <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={['0%', '10% - 25%', 'Over 25%', '50% - 75%', 'Over 75%']}
+                    selected={empForm.europeBusinessPct}
+                    placeholder="Select % of Business in Europe"
+                    onSelect={(val) => setEmpForm((prev) => ({ ...prev, europeBusinessPct: val }))}
+                  />
+                </div>
+
+                {/* Field 5: Shipping Terms */}
+                <div className="emp-field-group">
+                  <label className="emp-field-label">
+                    Shipping Terms <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={['FOB', 'CIF', 'EXW', 'DDP', 'FCA']}
+                    selected={empForm.shippingTerms}
+                    placeholder="Select Shipping Terms"
+                    onSelect={(val) => setEmpForm((prev) => ({ ...prev, shippingTerms: val }))}
+                  />
+                </div>
+
+                {/* Field 6: Years in Business */}
+                <div className="emp-field-group">
+                  <label className="emp-field-label">
+                    Years in Business <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
+                    selected={empForm.yearsInBusiness}
+                    placeholder="Select Years in Business"
+                    onSelect={(val) => setEmpForm((prev) => ({ ...prev, yearsInBusiness: val }))}
+                  />
+                </div>
+
+                {/* Field 7: Years in European Business */}
+                <div className="emp-field-group">
+                  <label className="emp-field-label">
+                    Years in European Business <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
+                    selected={empForm.yearsInEuropeBusiness}
+                    placeholder="Select Years in European Business"
+                    onSelect={(val) => setEmpForm((prev) => ({ ...prev, yearsInEuropeBusiness: val }))}
+                  />
+                </div>
+
+                {/* Field 8: Business Type */}
+                <div className="emp-field-group">
+                  <label className="emp-field-label">
+                    Business Type <span className="required-star">*</span>
+                  </label>
+                  <SingleSelectDropdown
+                    options={['Manufacturer', 'Trader / Distributor', 'Agent', 'Exporter']}
+                    selected={empForm.businessType}
+                    placeholder="Select Business Type"
+                    onSelect={(val) => setEmpForm((prev) => ({ ...prev, businessType: val }))}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Tab Content: Employees Details */}
-      {activeTab === 'Employees Details' && (
-        <div className="employees-tab-content">
-          <div className="emp-fields-grid">
-            {/* Field 1: No. of Employee */}
-            <div className="emp-field-group">
-              <label className="emp-field-label">
-                No. of Employee <span className="required-star">*</span>
-              </label>
-              <SingleSelectDropdown
-                options={['Under 50', '50 - 100', '100 - 500', 'Over 500']}
-                selected={empForm.noOfEmployees}
-                placeholder="Select No. of Employee"
-                onSelect={(val) => setEmpForm((prev) => ({ ...prev, noOfEmployees: val }))}
-              />
+      {/* Tab Content: GPS */}
+      {activeTab === 'GPS' && (
+        <div className="gps-tab-content">
+          <div className="gps-card">
+            <div className="gps-grid-layout">
+              {/* Left Side: Map Search & View */}
+              <div className="gps-left-map-column">
+                <div className="gps-search-bar">
+                  <div className="gps-search-input-wrapper">
+                    <Search size={18} className="gps-search-icon" />
+                    <input
+                      type="text"
+                      className="gps-search-input"
+                      placeholder="Search places (e.g., Al-Karam Textile Mills, Karachi)..."
+                      value={gpsForm.searchQuery}
+                      onChange={(e) => setGpsForm((prev) => ({ ...prev, searchQuery: e.target.value }))}
+                    />
+                  </div>
+                  <button type="button" className="gps-google-badge">Google</button>
+                </div>
+
+                <div className="gps-map-frame-wrapper">
+                  <iframe
+                    title="GPS Google Map"
+                    width="100%"
+                    height="360"
+                    frameBorder="0"
+                    style={{ borderRadius: '10px', border: '1px solid #cbd5e1' }}
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                      gpsForm.searchQuery
+                        ? gpsForm.searchQuery
+                        : `${gpsForm.latitude},${gpsForm.longitude}`
+                    )}&z=15&output=embed`}
+                    allowFullScreen
+                  ></iframe>
+                </div>
+
+                <p className="gps-map-footer-note">
+                  📍 Click on the map or search above to choose the location pin.
+                </p>
+              </div>
+
+              {/* Right Side: Factory Form Fields */}
+              <div className="gps-right-form-column">
+                {/* Field 1: Name */}
+                <div className="gps-field-group">
+                  <label className="emp-field-label">
+                    Name <span className="required-star">*</span>
+                  </label>
+                  <TextField
+                    size="small"
+                    value={gpsForm.factoryName}
+                    onChange={(e) => setGpsForm((prev) => ({ ...prev, factoryName: e.target.value }))}
+                    fullWidth
+                    sx={muiTextFieldSx}
+                  />
+                </div>
+
+                {/* Field 2: Vendor */}
+                <div className="gps-field-group">
+                  <label className="emp-field-label">Vendor</label>
+                  <SingleSelectDropdown
+                    options={['AL AWAN (24)', 'LE FARC (10)', 'SWT VENDOR (15)']}
+                    selected={gpsForm.vendor}
+                    onSelect={(val) => setGpsForm((prev) => ({ ...prev, vendor: val }))}
+                  />
+                </div>
+
+                {/* Field 3: Address */}
+                <div className="gps-field-group">
+                  <label className="emp-field-label">Address</label>
+                  <textarea
+                    className="gps-textarea-element"
+                    rows={2}
+                    value={gpsForm.address}
+                    onChange={(e) => setGpsForm((prev) => ({ ...prev, address: e.target.value }))}
+                  />
+                </div>
+
+                {/* Field 4 & 5: City & Branch */}
+                <div className="gps-field-row-two">
+                  <div className="gps-field-group">
+                    <label className="emp-field-label">City</label>
+                    <SingleSelectDropdown
+                      options={['HONG KONG', 'SIALKOT', 'KARACHI', 'LAHORE', 'FAISALABAD', 'LEON']}
+                      selected={gpsForm.city}
+                      onSelect={(val) => setGpsForm((prev) => ({ ...prev, city: val }))}
+                    />
+                  </div>
+
+                  <div className="gps-field-group">
+                    <label className="emp-field-label">
+                      Branch <span className="required-star">*</span>
+                    </label>
+                    <TextField
+                      size="small"
+                      value={gpsForm.branch}
+                      onChange={(e) => setGpsForm((prev) => ({ ...prev, branch: e.target.value }))}
+                      fullWidth
+                      sx={muiTextFieldSx}
+                    />
+                  </div>
+                </div>
+
+                {/* Field 6, 7 & 8: Latitude, Longitude, Radius */}
+                <div className="gps-field-row-three">
+                  <div className="gps-field-group">
+                    <label className="emp-field-label">Latitude</label>
+                    <TextField
+                      size="small"
+                      value={gpsForm.latitude}
+                      onChange={(e) => setGpsForm((prev) => ({ ...prev, latitude: e.target.value }))}
+                      fullWidth
+                      sx={{
+                        ...muiTextFieldSx,
+                        '& input': { color: '#166534', fontWeight: 600 },
+                      }}
+                    />
+                  </div>
+
+                  <div className="gps-field-group">
+                    <label className="emp-field-label">Longitude</label>
+                    <TextField
+                      size="small"
+                      value={gpsForm.longitude}
+                      onChange={(e) => setGpsForm((prev) => ({ ...prev, longitude: e.target.value }))}
+                      fullWidth
+                      sx={{
+                        ...muiTextFieldSx,
+                        '& input': { color: '#166534', fontWeight: 600 },
+                      }}
+                    />
+                  </div>
+
+                  <div className="gps-field-group">
+                    <label className="emp-field-label">Radius (meters)</label>
+                    <div className="gps-radius-input-group">
+                      <TextField
+                        size="small"
+                        value={gpsForm.radius}
+                        onChange={(e) => setGpsForm((prev) => ({ ...prev, radius: e.target.value }))}
+                        fullWidth
+                        sx={muiTextFieldSx}
+                      />
+                      <span className="gps-radius-badge">m</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Field 2: % of Export Business */}
-            <div className="emp-field-group">
-              <label className="emp-field-label">
-                % of Export Business <span className="required-star">*</span>
-              </label>
-              <SingleSelectDropdown
-                options={['0%', '10% - 25%', '25% - 50%', 'Over 50%']}
-                selected={empForm.exportBusinessPct}
-                placeholder="Select % of Export Business"
-                onSelect={(val) => setEmpForm((prev) => ({ ...prev, exportBusinessPct: val }))}
-              />
+            {/* Bottom Actions Row */}
+            <div className="gps-bottom-actions">
+              <button type="button" className="gps-cancel-btn">
+                <X size={16} />
+                <span>Cancel</span>
+              </button>
+              <button type="button" className="gps-save-btn">
+                <Check size={16} />
+                <span>Save Changes</span>
+              </button>
             </div>
+          </div>
+        </div>
+      )}
 
-            {/* Field 3: Experience in Business Type */}
-            <div className="emp-field-group">
-              <label className="emp-field-label">
-                Experience in Business Type <span className="required-star">*</span>
-              </label>
-              <SingleSelectDropdown
-                options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10 Years']}
-                selected={empForm.experienceInBusiness}
-                placeholder="Select Experience in Business"
-                onSelect={(val) => setEmpForm((prev) => ({ ...prev, experienceInBusiness: val }))}
-              />
-            </div>
+      {/* Tab Content: Material Supplier */}
+      {activeTab === 'Material Supplier' && (
+        <div className="material-supplier-tab-content">
+          <div className="material-supplier-header">
+            <h2 className="material-supplier-title">Material Suppliers & Partners</h2>
+            <p className="material-supplier-subtitle">
+              Verified raw material vendors and supply partners linked to this factory.
+            </p>
+          </div>
 
-            {/* Field 4: % of Business in Europe */}
-            <div className="emp-field-group">
-              <label className="emp-field-label">
-                % of Business in Europe <span className="required-star">*</span>
-              </label>
-              <SingleSelectDropdown
-                options={['0%', '10% - 25%', 'Over 25%', '50% - 75%', 'Over 75%']}
-                selected={empForm.europeBusinessPct}
-                placeholder="Select % of Business in Europe"
-                onSelect={(val) => setEmpForm((prev) => ({ ...prev, europeBusinessPct: val }))}
-              />
-            </div>
+          <div className="material-supplier-cards-list">
+            {materialSuppliersList.map((sup, idx) => {
+              const isExpanded = !!expandedSuppliers[idx];
+              return (
+                <div key={idx} className={`mat-sup-card ${isExpanded ? 'expanded' : ''}`}>
+                  {/* Card Header Top Row: Title + Verified Badge */}
+                  <div className="mat-sup-card-top">
+                    <div className="mat-sup-title-group">
+                      <div className="mat-sup-icon-badge">
+                        <Building2 size={20} color="#09090b" />
+                      </div>
+                      <h3 className="mat-sup-name">{sup.name}</h3>
+                    </div>
 
-            {/* Field 5: Shipping Terms */}
-            <div className="emp-field-group">
-              <label className="emp-field-label">
-                Shipping Terms <span className="required-star">*</span>
-              </label>
-              <SingleSelectDropdown
-                options={['FOB', 'CIF', 'EXW', 'DDP', 'FCA']}
-                selected={empForm.shippingTerms}
-                placeholder="Select Shipping Terms"
-                onSelect={(val) => setEmpForm((prev) => ({ ...prev, shippingTerms: val }))}
-              />
-            </div>
+                    <div className="mat-sup-verified-badge">
+                      <CheckCircle size={15} color="#16a34a" />
+                      <span>Verified by AI</span>
+                    </div>
+                  </div>
 
-            {/* Field 6: Years in Business */}
-            <div className="emp-field-group">
-              <label className="emp-field-label">
-                Years in Business <span className="required-star">*</span>
-              </label>
-              <SingleSelectDropdown
-                options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
-                selected={empForm.yearsInBusiness}
-                placeholder="Select Years in Business"
-                onSelect={(val) => setEmpForm((prev) => ({ ...prev, yearsInBusiness: val }))}
-              />
-            </div>
+                  {/* Always Visible Core Info Grid */}
+                  <div className="mat-sup-info-grid">
+                    <div className="mat-sup-info-item">
+                      <MapPin size={16} className="mat-sup-item-icon" />
+                      <div>
+                        <span className="mat-sup-label">Address</span>
+                        <p className="mat-sup-val">{sup.address}</p>
+                      </div>
+                    </div>
 
-            {/* Field 7: Years in European Business */}
-            <div className="emp-field-group">
-              <label className="emp-field-label">
-                Years in European Business <span className="required-star">*</span>
-              </label>
-              <SingleSelectDropdown
-                options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
-                selected={empForm.yearsInEuropeBusiness}
-                placeholder="Select Years in European Business"
-                onSelect={(val) => setEmpForm((prev) => ({ ...prev, yearsInEuropeBusiness: val }))}
-              />
-            </div>
+                    <div className="mat-sup-info-item">
+                      <Building2 size={16} className="mat-sup-item-icon" />
+                      <div>
+                        <span className="mat-sup-label">City</span>
+                        <p className="mat-sup-val">{sup.city}</p>
+                      </div>
+                    </div>
 
-            {/* Field 8: Business Type */}
-            <div className="emp-field-group">
-              <label className="emp-field-label">
-                Business Type <span className="required-star">*</span>
-              </label>
-              <SingleSelectDropdown
-                options={['Manufacturer', 'Trader / Distributor', 'Agent', 'Exporter']}
-                selected={empForm.businessType}
-                placeholder="Select Business Type"
-                onSelect={(val) => setEmpForm((prev) => ({ ...prev, businessType: val }))}
-              />
-            </div>
+                    <div className="mat-sup-info-item">
+                      <Phone size={16} className="mat-sup-item-icon" />
+                      <div>
+                        <span className="mat-sup-label">Contact Person & Phone</span>
+                        <p className="mat-sup-val">{sup.contactPerson} ({sup.phone})</p>
+                      </div>
+                    </div>
+
+                    <div className="mat-sup-info-item">
+                      <Mail size={16} className="mat-sup-item-icon" />
+                      <div>
+                        <span className="mat-sup-label">Email</span>
+                        <p className="mat-sup-val">
+                          <a href={`mailto:${sup.email}`} className="mat-sup-link">{sup.email}</a>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Expand / Collapse Section */}
+                  {isExpanded && (
+                    <div className="mat-sup-expanded-content">
+                      <div className="mat-sup-divider"></div>
+                      <h4 className="mat-sup-expanded-heading">Supplier Specifications & Operations</h4>
+
+                      <div className="mat-sup-spec-grid">
+                        <div className="mat-sup-spec-box">
+                          <span className="mat-sup-spec-label">Material Type</span>
+                          <span className="mat-sup-spec-val">{sup.details.materialType}</span>
+                        </div>
+                        <div className="mat-sup-spec-box">
+                          <span className="mat-sup-spec-label">Supply Capacity</span>
+                          <span className="mat-sup-spec-val">{sup.details.capacity}</span>
+                        </div>
+                        <div className="mat-sup-spec-box">
+                          <span className="mat-sup-spec-label">Minimum Order (MOQ)</span>
+                          <span className="mat-sup-spec-val">{sup.details.moq}</span>
+                        </div>
+                        <div className="mat-sup-spec-box">
+                          <span className="mat-sup-spec-label">Lead Time</span>
+                          <span className="mat-sup-spec-val">{sup.details.leadTime}</span>
+                        </div>
+                        <div className="mat-sup-spec-box">
+                          <span className="mat-sup-spec-label">Quality Certification</span>
+                          <span className="mat-sup-spec-val highlight-green">{sup.details.qualityCert}</span>
+                        </div>
+                        <div className="mat-sup-spec-box">
+                          <span className="mat-sup-spec-label">Payment Terms</span>
+                          <span className="mat-sup-spec-val">{sup.details.paymentTerms}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Card Footer: Expand Button */}
+                  <div className="mat-sup-card-footer">
+                    <button
+                      type="button"
+                      className="mat-sup-expand-btn"
+                      onClick={() => toggleExpandSupplier(idx)}
+                    >
+                      <span>{isExpanded ? 'Collapse Details' : 'Expand Details'}</span>
+                      {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -812,7 +1355,7 @@ export default function SupplierDetail() {
       )}
 
       {/* Tab Content for Catalog */}
-      {activeTab !== 'Overview' && activeTab !== 'Contact' && activeTab !== 'Team' && activeTab !== 'Employees Details' && activeTab !== 'Certificates and Patents' && (
+      {activeTab !== 'Overview' && activeTab !== 'Contact' && activeTab !== 'Team' && activeTab !== 'Setup Details' && activeTab !== 'Certificates and Patents' && (
         <div className="tab-placeholder-content">
           <h3>{activeTab} Section</h3>
           <p>Detailed {activeTab.toLowerCase()} information for {name} will be displayed here.</p>
