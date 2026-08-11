@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check } from 'lucide-react';
+import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown } from 'lucide-react';
 import { decryptObjectKeys } from '../../api/encryption';
+import SingleSelectDropdown from './SingleSelectDropdown';
 import './SupplierDetail.css';
 
 export default function SupplierDetail() {
@@ -42,8 +43,9 @@ export default function SupplierDetail() {
   const desc = supplier?.Desc || [supplier?.Address1, supplier?.Address2, country].filter(Boolean).join(', ');
   const capacity = supplier?.Capacity || '';
   const materials = supplier?.Type || supplier?.ProductCategoriesID || '';
-  const websiteUrl = supplier?.Website || '';
-  const email = supplier?.OnboardingEmail || '';
+  const websiteUrl = (supplier?.Website && supplier.Website !== '-') ? supplier.Website : '';
+  const email = (supplier?.OnboardingEmail && supplier.OnboardingEmail !== '-') ? supplier.OnboardingEmail : (supplier?.Email && supplier.Email !== '-' ? supplier.Email : '');
+
   const address1 = supplier?.Address1 || '';
   const city = [supplier?.City, supplier?.Province, supplier?.ZipCode, supplier?.CountryName].filter(Boolean).join(', ');
   const phone = supplier?.PhoneNumber || '';
@@ -51,24 +53,38 @@ export default function SupplierDetail() {
   const supplierDomain = email.includes('@') ? email.split('@')[1] : 'lefarc.com';
   const supplierPrefix = name || 'LeFarc';
 
-  const teamMembers = [
-    {
-      name: 'Garnica Fernanda',
-      email: email || `mercadotecnia@${supplierDomain}`
-    },
-    {
-      name: `${supplierPrefix} Material`,
-      email: `material@${supplierDomain}`
-    },
-    {
-      name: `${supplierPrefix} Catalog`,
-      email: `catalog@${supplierDomain}`
-    },
-    {
-      name: `${supplierPrefix} Sales`,
-      email: `sales@${supplierDomain}`
+  const [empForm, setEmpForm] = useState({
+    noOfEmployees: supplier?.NumberofEmployees || 'Over 500',
+    exportBusinessPct: supplier?.ExporterBit || 'Over 50%',
+    experienceInBusiness: '',
+    europeBusinessPct: 'Over 25%',
+    shippingTerms: 'FOB',
+    yearsInBusiness: 'Over 10',
+    yearsInEuropeBusiness: 'Over 10',
+    businessType: 'Manufacturer',
+  });
+
+  useEffect(() => {
+    if (supplier) {
+      setEmpForm((prev) => ({
+        ...prev,
+        noOfEmployees: supplier.NumberofEmployees || prev.noOfEmployees,
+        exportBusinessPct: supplier.ExporterBit || prev.exportBusinessPct,
+      }));
     }
-  ];
+  }, [supplier]);
+
+  const handleEmpFormChange = (key, value) => {
+    setEmpForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  if (loading) {
+    return (
+      <div className="suppliers-loader-container" style={{ minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="suppliers-spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="supplier-detail-page">
@@ -115,7 +131,7 @@ export default function SupplierDetail() {
 
       {/* Secondary Navigation Tabs */}
       <div className="supplier-nav-tabs">
-        {['Overview', 'Catalog', 'Team', 'Contact'].map((tab) => (
+        {['Overview', 'Catalog', 'Team', 'Contact', 'Employees Details'].map((tab) => (
           <button
             key={tab}
             className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
@@ -214,26 +230,34 @@ export default function SupplierDetail() {
             <div className="contact-info-col">
               <h3 className="contact-sub-heading">Website</h3>
               <div className="contact-divider"></div>
-              <a
-                href={websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-link"
-              >
-                {websiteUrl}
-              </a>
+              {websiteUrl ? (
+                <a
+                  href={websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-link"
+                >
+                  {websiteUrl}
+                </a>
+              ) : (
+                <span className="contact-empty-text">-</span>
+              )}
               <div className="contact-divider"></div>
             </div>
 
             <div className="contact-info-col">
               <h3 className="contact-sub-heading">Email</h3>
               <div className="contact-divider"></div>
-              <a
-                href={`mailto:${email}`}
-                className="contact-link"
-              >
-                {email}
-              </a>
+              {email ? (
+                <a
+                  href={`mailto:${email}`}
+                  className="contact-link"
+                >
+                  {email}
+                </a>
+              ) : (
+                <span className="contact-empty-text">-</span>
+              )}
               <div className="contact-divider"></div>
             </div>
           </div>
@@ -280,8 +304,112 @@ export default function SupplierDetail() {
         </div>
       )}
 
+      {/* Tab Content: Employees Details */}
+      {activeTab === 'Employees Details' && (
+        <div className="employees-tab-content">
+          <div className="emp-fields-grid">
+            {/* Field 1: No. of Employee */}
+            <div className="emp-field-group">
+              <label className="emp-field-label">
+                No. of Employee <span className="required-star">*</span>
+              </label>
+              <SingleSelectDropdown
+                options={['Under 50', '50 - 100', '100 - 500', 'Over 500']}
+                selected={empForm.noOfEmployees}
+                onSelect={(val) => handleEmpFormChange('noOfEmployees', val)}
+              />
+            </div>
+
+            {/* Field 2: % of Export Business */}
+            <div className="emp-field-group">
+              <label className="emp-field-label">
+                % of Export Business <span className="required-star">*</span>
+              </label>
+              <SingleSelectDropdown
+                options={['0%', '10% - 25%', '25% - 50%', 'Over 50%']}
+                selected={empForm.exportBusinessPct}
+                onSelect={(val) => handleEmpFormChange('exportBusinessPct', val)}
+              />
+            </div>
+
+            {/* Field 3: Experience in Business Type */}
+            <div className="emp-field-group">
+              <label className="emp-field-label">
+                Experience in Business Type <span className="required-star">*</span>
+              </label>
+              <SingleSelectDropdown
+                options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10 Years']}
+                selected={empForm.experienceInBusiness}
+                placeholder="Select Experience in Buisiness"
+                onSelect={(val) => handleEmpFormChange('experienceInBusiness', val)}
+              />
+            </div>
+
+            {/* Field 4: % of Business in Europe */}
+            <div className="emp-field-group">
+              <label className="emp-field-label">
+                % of Business in Europe <span className="required-star">*</span>
+              </label>
+              <SingleSelectDropdown
+                options={['0%', '10% - 25%', 'Over 25%', '50% - 75%', 'Over 75%']}
+                selected={empForm.europeBusinessPct}
+                onSelect={(val) => handleEmpFormChange('europeBusinessPct', val)}
+              />
+            </div>
+
+            {/* Field 5: Shipping Terms */}
+            <div className="emp-field-group">
+              <label className="emp-field-label">
+                Shipping Terms <span className="required-star">*</span>
+              </label>
+              <SingleSelectDropdown
+                options={['FOB', 'CIF', 'EXW', 'DDP', 'FCA']}
+                selected={empForm.shippingTerms}
+                onSelect={(val) => handleEmpFormChange('shippingTerms', val)}
+              />
+            </div>
+
+            {/* Field 6: Years in Business */}
+            <div className="emp-field-group">
+              <label className="emp-field-label">
+                Years in Business <span className="required-star">*</span>
+              </label>
+              <SingleSelectDropdown
+                options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
+                selected={empForm.yearsInBusiness}
+                onSelect={(val) => handleEmpFormChange('yearsInBusiness', val)}
+              />
+            </div>
+
+            {/* Field 7: Years in European Business */}
+            <div className="emp-field-group">
+              <label className="emp-field-label">
+                Years in European Business <span className="required-star">*</span>
+              </label>
+              <SingleSelectDropdown
+                options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
+                selected={empForm.yearsInEuropeBusiness}
+                onSelect={(val) => handleEmpFormChange('yearsInEuropeBusiness', val)}
+              />
+            </div>
+
+            {/* Field 8: Business Type */}
+            <div className="emp-field-group">
+              <label className="emp-field-label">
+                Business Type <span className="required-star">*</span>
+              </label>
+              <SingleSelectDropdown
+                options={['Manufacturer', 'Trader / Distributor', 'Agent', 'Exporter']}
+                selected={empForm.businessType}
+                onSelect={(val) => handleEmpFormChange('businessType', val)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tab Content for Catalog */}
-      {activeTab !== 'Overview' && activeTab !== 'Contact' && activeTab !== 'Team' && (
+      {activeTab !== 'Overview' && activeTab !== 'Contact' && activeTab !== 'Team' && activeTab !== 'Employees Details' && (
         <div className="tab-placeholder-content">
           <h3>{activeTab} Section</h3>
           <p>Detailed {activeTab.toLowerCase()} information for {name} will be displayed here.</p>

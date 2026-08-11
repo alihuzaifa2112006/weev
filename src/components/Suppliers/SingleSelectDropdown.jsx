@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import './SingleSelectDropdown.css';
 
-export default function SingleSelectDropdown({ options, selected, onSelect }) {
+export default function SingleSelectDropdown({ options, selected, onSelect, placeholder }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -21,14 +21,17 @@ export default function SingleSelectDropdown({ options, selected, onSelect }) {
     setIsOpen(false);
   };
 
+  const displayText = selected || placeholder || 'Select option';
+  const isPlaceholder = !selected && placeholder;
+
   return (
     <div className="single-select-container" ref={dropdownRef}>
       <div 
-        className={`single-select-trigger ${isOpen ? 'open' : ''}`}
+        className={`single-select-trigger ${isOpen ? 'open' : ''} ${isPlaceholder ? 'is-placeholder' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="single-select-value">{selected}</span>
-        <ChevronDown size={16} className={`single-select-icon ${isOpen ? 'rotate' : ''}`} />
+        <span className="single-select-value">{displayText}</span>
+        <ChevronDown size={18} className={`single-select-icon ${isOpen ? 'rotate' : ''}`} />
       </div>
 
       {isOpen && (

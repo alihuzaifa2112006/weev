@@ -152,6 +152,29 @@
   color: #666666;
 }
 
+.suppliers-loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  width: 100%;
+}
+
+.suppliers-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #09090b;
+  border-radius: 50%;
+  animation: suppliers-spin 0.8s linear infinite;
+}
+
+@keyframes suppliers-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .supplier-card {
   background-color: #FFFFFF;
   border: 1px solid #E5E5E5;

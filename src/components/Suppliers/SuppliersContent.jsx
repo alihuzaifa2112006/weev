@@ -181,7 +181,9 @@ export default function SuppliersContent() {
         {/* Supplier Cards List */}
         <div className="suppliers-list">
           {loading ? (
-            <div className="loading-state">Loading suppliers…</div>
+            <div className="suppliers-loader-container">
+              <div className="suppliers-spinner"></div>
+            </div>
           ) : error ? (
             <div className="loading-state">{error}</div>
           ) : activeSuppliers.length === 0 ? (
