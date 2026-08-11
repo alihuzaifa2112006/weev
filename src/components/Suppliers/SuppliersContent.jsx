@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { decryptObjectKeys } from './api/getDecryption';
+import { getSuppliersData } from '../../api/supplierService';
 import MultiSelectDropdown from './MultiSelectDropdown';
 import SingleSelectDropdown from './SingleSelectDropdown';
 import './SuppliersContent.css';
@@ -58,24 +58,11 @@ export default function SuppliersContent() {
   useEffect(() => {
     let isMounted = true;
 
-    const fetchSuppliers = async () => {
+    const loadData = async () => {
       try {
-        const apiUrl =
-          import.meta.env.VITE_API_URL || 'https://svitchapi.swtcloud.net/mapi/';
-        const response = await fetch(`${apiUrl}GetSupplierData?UserID=265`);
-        const data = await response.json();
-
-        if (!isMounted) return;
-
-        if (
-          (data.ResponseCode === '100' || data.ResponseCode === '200') &&
-          Array.isArray(data.ServiceRes)
-        ) {
-          const decryptedList = decryptObjectKeys(data.ServiceRes);
-          console.log(decryptedList);
+        const decryptedList = await getSuppliersData();
+        if (isMounted) {
           setSuppliers(decryptedList);
-        } else {
-          setError(data.ResponseMessage || 'Could not load suppliers.');
         }
       } catch (err) {
         console.error('Error fetching suppliers:', err);
@@ -85,7 +72,7 @@ export default function SuppliersContent() {
       }
     };
 
-    fetchSuppliers();
+    loadData();
     return () => {
       isMounted = false;
     };
@@ -236,11 +223,11 @@ export default function SuppliersContent() {
                   style={{ cursor: 'pointer' }}
                   onClick={() => navigate(`/suppliers/${supplier.VenderLibraryID || idx}`, { state: { supplier } })}
                 >
-                  <div className="supplier-card-header">
-                    <div className="supplier-logo-placeholder">
-                      {supplier.VenderName ? supplier.VenderName.charAt(0) : 'S'}
+                  { (supplier.SupplierLogo || supplier.imgOriginalLogo) && (
+                    <div className="supplier-card-header">
+                      <img src={supplier.SupplierLogo || supplier.imgOriginalLogo} alt="Supplier Logo" className="supplier-card-logo-img" />
                     </div>
-                  </div>
+                  )}
                   <div className="supplier-card-body">
                     <div className="supplier-main-info">
                       <h2 className="supplier-name">

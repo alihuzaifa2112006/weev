@@ -7,6 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TextField } from '@mui/material';
 import dayjs from 'dayjs';
 import { decryptObjectKeys } from '../../api/encryption';
+import { getSuppliersData } from '../../api/supplierService';
 import SingleSelectDropdown from './SingleSelectDropdown';
 import './SupplierDetail.css';
 
@@ -43,11 +44,8 @@ export default function SupplierDetail() {
     if (!supplier) {
       const fetchSupplier = async () => {
         try {
-          const apiUrl = import.meta.env.VITE_API_URL || 'https://svitchapi.swtcloud.net/mapi/';
-          const response = await fetch(`${apiUrl}GetSupplierData?UserID=265`);
-          const data = await response.json();
-          if (data.ServiceRes && data.ServiceRes.length > 0) {
-            const decryptedList = decryptObjectKeys(data.ServiceRes);
+          const decryptedList = await getSuppliersData();
+          if (decryptedList && decryptedList.length > 0) {
             const found = decryptedList.find(
               (s) => s.VenderLibraryID === id || s.SupplierCode === id
             ) || decryptedList[0];
