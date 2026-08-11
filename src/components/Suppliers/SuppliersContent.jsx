@@ -13,6 +13,10 @@ export default function SuppliersContent() {
   const [showMySuppliers, setShowMySuppliers] = useState(false);
   const [visibleCount, setVisibleCount] = useState(5);
   const [sortBy, setSortBy] = useState('Date Added');
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedCerts, setSelectedCerts] = useState([]);
+  const [selectedCountries, setSelectedCountries] = useState([]);
+  const [selectedHqs, setSelectedHqs] = useState([]);
 
   const typeOptions = [
     'Components, Outsoles, Insoles...',
@@ -89,12 +93,31 @@ export default function SuppliersContent() {
 
   const activeSuppliers = useMemo(() => {
     // "Only show my suppliers" — onboarded records are the ones that responded.
-    const filtered = showMySuppliers
+    let filtered = showMySuppliers
       ? suppliers.filter(
         (s) => String(s.IsSupplierResponed).toLowerCase() === 'true' ||
           String(s.IsSupplierResponed) === '1'
       )
       : suppliers;
+
+    // Filter by Country of production
+    if (selectedCountries.length > 0) {
+      filtered = filtered.filter((s) => {
+        const country = (s.CountryName || '').toLowerCase();
+        const address = ((s.Address1 || '') + ' ' + (s.Address2 || '') + ' ' + (s.City || '')).toLowerCase();
+        return selectedCountries.some((c) =>
+          country.includes(c.toLowerCase()) || address.includes(c.toLowerCase())
+        );
+      });
+    }
+
+    // Filter by Headquarters
+    if (selectedHqs.length > 0) {
+      filtered = filtered.filter((s) => {
+        const country = (s.CountryName || '').toLowerCase();
+        return selectedHqs.some((c) => country.includes(c.toLowerCase()));
+      });
+    }
 
     const byField = (field, dir) => (a, b) =>
       dir * String(a[field] || '').localeCompare(String(b[field] || ''));
@@ -109,11 +132,9 @@ export default function SuppliersContent() {
       case 'Headquarters Z to A':
         return [...filtered].sort(byField('CountryName', -1));
       default:
-        // Date Added / Date Last Modified / Primary Material Type:
-        // the list endpoint returns no field for these yet.
         return filtered;
     }
-  }, [suppliers, showMySuppliers, sortBy]);
+  }, [suppliers, showMySuppliers, selectedCountries, selectedHqs, sortBy]);
 
   const displayData = activeSuppliers.slice(0, visibleCount);
 
@@ -149,19 +170,37 @@ export default function SuppliersContent() {
         <div className="suppliers-filters">
           <div className="filter-group">
             <label>Type</label>
-            <MultiSelectDropdown options={typeOptions} />
+            <MultiSelectDropdown
+              options={typeOptions}
+              selected={selectedTypes}
+              onChange={setSelectedTypes}
+            />
           </div>
           <div className="filter-group">
             <label>Certifications</label>
-            <MultiSelectDropdown options={certOptions} />
+            <MultiSelectDropdown
+              options={certOptions}
+              selected={selectedCerts}
+              onChange={setSelectedCerts}
+            />
           </div>
           <div className="filter-group">
             <label>Country of production</label>
-            <MultiSelectDropdown options={countryOptions} hasSearch={true} />
+            <MultiSelectDropdown
+              options={countryOptions}
+              hasSearch={true}
+              selected={selectedCountries}
+              onChange={setSelectedCountries}
+            />
           </div>
           <div className="filter-group">
             <label>Headquarters</label>
-            <MultiSelectDropdown options={hqOptions} hasSearch={true} />
+            <MultiSelectDropdown
+              options={hqOptions}
+              hasSearch={true}
+              selected={selectedHqs}
+              onChange={setSelectedHqs}
+            />
           </div>
         </div>
 

@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Search } from 'lucide-react';
 import './MultiSelectDropdown.css';
 
-export default function MultiSelectDropdown({ options, placeholder = "Select...", hasSearch = false }) {
+export default function MultiSelectDropdown({ options, placeholder = "Select...", hasSearch = false, selected = [], onChange }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [internalSelected, setInternalSelected] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef(null);
+
+  const selectedItems = onChange ? selected : internalSelected;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -20,10 +22,16 @@ export default function MultiSelectDropdown({ options, placeholder = "Select..."
   }, []);
 
   const toggleItem = (option) => {
+    let next;
     if (selectedItems.includes(option)) {
-      setSelectedItems(selectedItems.filter(item => item !== option));
+      next = selectedItems.filter(item => item !== option);
     } else {
-      setSelectedItems([...selectedItems, option]);
+      next = [...selectedItems, option];
+    }
+    if (onChange) {
+      onChange(next);
+    } else {
+      setInternalSelected(next);
     }
   };
 
