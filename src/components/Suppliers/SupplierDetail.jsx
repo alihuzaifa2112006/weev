@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown, Calendar, FolderPlus, UploadCloud, Trash2, MapPin, Search, X, CheckCircle, ChevronUp, Building2, Phone } from 'lucide-react';
+import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check, ChevronDown, Calendar, FolderPlus, UploadCloud, Trash2, MapPin, Search, X, CheckCircle, ChevronUp, Building2, Phone, ThumbsUp } from 'lucide-react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -137,6 +137,42 @@ export default function SupplierDetail() {
     radius: '500',
   });
 
+  const catalogProducts = [
+    { id: 1, img: '/1.jpg', title: 'Cross-Strap Embroidered Cork Sandal' },
+    { id: 2, img: '/2.jpg', title: 'Double Buckle Patterned Cork Sandal' },
+    { id: 3, img: '/3.jpg', title: 'Black Ankle-Strap Comfort Sandal' },
+    { id: 4, img: '/4.jpg', title: 'Tan Leather Circle-Accent Slingback' },
+    { id: 5, img: '/5.jpg', title: 'Casual Everyday Flat Sandal' },
+    { id: 6, img: '/6.jpg', title: 'Classic Urban Sneaker' },
+  ];
+
+  const [catalogComments, setCatalogComments] = useState({});
+  const [catalogCommentInputs, setCatalogCommentInputs] = useState({});
+  const [catalogLikes, setCatalogLikes] = useState({});
+  const [catalogUserLiked, setCatalogUserLiked] = useState({});
+
+  const handleLikeToggle = (productId) => {
+    setCatalogUserLiked((prev) => {
+      const isLiked = !!prev[productId];
+      const newLiked = !isLiked;
+      setCatalogLikes((prevLikes) => ({
+        ...prevLikes,
+        [productId]: (prevLikes[productId] || 0) + (newLiked ? 1 : -1),
+      }));
+      return { ...prev, [productId]: newLiked };
+    });
+  };
+
+  const handlePostComment = (productId) => {
+    const text = catalogCommentInputs[productId]?.trim();
+    if (!text) return;
+    setCatalogComments((prev) => ({
+      ...prev,
+      [productId]: [...(prev[productId] || []), text],
+    }));
+    setCatalogCommentInputs((prev) => ({ ...prev, [productId]: '' }));
+  };
+
   const [expandedSuppliers, setExpandedSuppliers] = useState({});
 
   const toggleExpandSupplier = (index) => {
@@ -148,53 +184,53 @@ export default function SupplierDetail() {
 
   const materialSuppliersList = [
     {
-      name: 'Pacific Leather & Raw Materials Co.',
+      name: 'Apex Organic Cotton & Textile Mills',
       verified: true,
-      address: 'Block B, 14/F, Kwai Hing Industrial Building, Hong Kong',
-      city: 'Hong Kong',
-      contactPerson: 'David Zhang',
-      phone: '+852 9123-4567',
-      email: 'david.zhang@pacificleather.hk',
+      address: 'Plot 18, Industrial Estate Phase 2, Faisalabad, Pakistan',
+      city: 'Faisalabad',
+      contactPerson: 'Tariq Mehmood',
+      phone: '+92 300 4567890',
+      email: 'sales@apexcottonmills.com',
       details: {
-        materialType: 'Top Grain Cowhide, Lambskin & Goat Leather',
-        capacity: '50,000 SF / Month',
-        moq: '1,000 SF',
-        leadTime: '14 - 21 Days',
-        qualityCert: 'ISO 9001:2015, LWG Gold Rated',
-        paymentTerms: '30% Deposit, 70% LC at sight',
+        materialType: '100% Organic Combed Cotton, Pima Cotton & Jersey Fabrics',
+        capacity: '150,000 Meters / Month',
+        moq: '500 Meters',
+        leadTime: '10 - 15 Days',
+        qualityCert: 'GOTS Certified, OEKO-TEX Standard 100',
+        paymentTerms: '30% Advance, 70% LC at sight',
       },
     },
     {
-      name: 'Sialkot Tanning & Chemical Supplies',
+      name: 'Le Farc Tannery & Genuine Leather Supplies',
       verified: true,
-      address: 'Plot 45, Small Industrial Estate, Sialkot, Pakistan',
-      city: 'Sialkot',
-      contactPerson: 'Muhammad Usman',
-      phone: '+92 300 8765432',
-      email: 'usman@sialkottanning.com',
+      address: 'Km 12.5 Carretera León - Silao, León, Guanajuato, Mexico',
+      city: 'León',
+      contactPerson: 'Carlos Delgado',
+      phone: '+52 477 710 4300',
+      email: 'contact@lefarc.com.mx',
       details: {
-        materialType: 'Eco-Friendly Tanning Dyes & Finishing Agents',
-        capacity: '200 Tons / Month',
-        moq: '5 Tons',
-        leadTime: '7 - 10 Days',
-        qualityCert: 'OEKO-TEX Standard 100, REACH Compliant',
+        materialType: 'Finished Cowhide Leather, Goat Suede & Sheep Nappa',
+        capacity: '80,000 SF / Month',
+        moq: '1,000 SF',
+        leadTime: '14 - 21 Days',
+        qualityCert: 'LWG Gold Rated, ISO 14001:2015',
         paymentTerms: 'Net 30 Days',
       },
     },
     {
-      name: 'Milano Hardware & Zipper Fittings Ltd.',
+      name: 'Guangzhou Silk, Denim & Trims Factory',
       verified: true,
-      address: 'Via Industriale 88, 20121 Milano, Italy',
-      city: 'Milan',
-      contactPerson: 'Marco Rossi',
-      phone: '+39 02 5544 3322',
-      email: 'm.rossi@milanohardware.it',
+      address: 'No. 88 Textile Avenue, Haizhu District, Guangzhou, China',
+      city: 'Guangzhou',
+      contactPerson: 'Chen Wei',
+      phone: '+86 20 8455 1234',
+      email: 'chen.wei@gzsilkdenim.cn',
       details: {
-        materialType: 'Brass Buckles, Metal Rivets & YKK Metal Zippers',
-        capacity: '500,000 Pcs / Month',
-        moq: '5,000 Pcs',
-        leadTime: '10 - 15 Days',
-        qualityCert: 'ISO 14001, RoHS Compliant',
+        materialType: 'Raw Denim, Pure Mulberry Silk, Linen & Garment Trims',
+        capacity: '300,000 Meters / Month',
+        moq: '1,000 Meters',
+        leadTime: '12 - 18 Days',
+        qualityCert: 'ISO 9001:2015, REACH Compliant',
         paymentTerms: 'TT Bank Transfer',
       },
     },
@@ -362,7 +398,7 @@ export default function SupplierDetail() {
             <div className="story-left">
               <h2 className="section-heading">Our Story</h2>
               <p className="story-desc">{desc || 'No description available for this supplier.'}</p>
-              
+
               <div className="cert-badge-box">
                 <div className="lwg-badge">
                   <div className="lwg-icon">
@@ -430,6 +466,88 @@ export default function SupplierDetail() {
               </div>
             </div>
           </section>
+        </div>
+      )}
+
+      {/* Tab Content: Catalog */}
+      {activeTab === 'Catalog' && (
+        <div className="catalog-tab-content">
+          {/* Catalog Top Banner */}
+          <div className="catalog-hero-banner">
+            <div className="catalog-banner-overlay">
+              <span className="catalog-banner-sub">Footwear Collection 2025</span>
+              <h1 className="catalog-banner-title">Sandals • Sneakers • Multiple Design Options</h1>
+            </div>
+          </div>
+
+          {/* Catalog Products Grid */}
+          <div className="catalog-products-grid">
+            {catalogProducts.map((product) => {
+              const likesCount = catalogLikes[product.id] || 0;
+              const isLiked = !!catalogUserLiked[product.id];
+              const productComments = catalogComments[product.id] || [];
+              const currentInput = catalogCommentInputs[product.id] || '';
+
+              return (
+                <div key={product.id} className="catalog-product-card">
+                  {/* Product Image Frame */}
+                  <div className="catalog-img-frame">
+                    <img src={product.img} alt={product.title} className="catalog-product-img" />
+                  </div>
+
+                  {/* Comment Input Box */}
+                  <div className="catalog-card-body">
+                    <div className="catalog-comment-wrapper">
+                      <textarea
+                        rows={2}
+                        className="catalog-comment-input"
+                        placeholder="Leave your comments here!"
+                        value={currentInput}
+                        onChange={(e) =>
+                          setCatalogCommentInputs((prev) => ({
+                            ...prev,
+                            [product.id]: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+
+                    {/* Likes & Post Button Row */}
+                    <div className="catalog-card-action-row">
+                      <button
+                        type="button"
+                        className={`catalog-like-btn ${isLiked ? 'liked' : ''}`}
+                        onClick={() => handleLikeToggle(product.id)}
+                      >
+                        <ThumbsUp size={14} className="like-icon" />
+                        <span>({likesCount})</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="catalog-post-btn"
+                        onClick={() => handlePostComment(product.id)}
+                      >
+                        Post
+                      </button>
+                    </div>
+
+                    {/* Render Posted Comments */}
+                    {productComments.length > 0 && (
+                      <div className="catalog-comments-list">
+                        {productComments.map((c, i) => (
+                          <div key={i} className="catalog-comment-bubble">
+                            <span className="comment-author">User:</span>
+                            <span className="comment-text">{c}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -1013,7 +1131,7 @@ export default function SupplierDetail() {
       {activeTab === 'Material Supplier' && (
         <div className="material-supplier-tab-content">
           <div className="material-supplier-header">
-            <h2 className="material-supplier-title">Material Suppliers & Partners</h2>
+            <h2 className="material-supplier-title">Material Suppliers</h2>
             <p className="material-supplier-subtitle">
               Verified raw material vendors and supply partners linked to this factory.
             </p>
@@ -1111,8 +1229,16 @@ export default function SupplierDetail() {
                     </div>
                   )}
 
-                  {/* Card Footer: Expand Button */}
+                  {/* Card Footer: GPS & Expand Buttons */}
                   <div className="mat-sup-card-footer">
+                    <button
+                      type="button"
+                      className="mat-sup-gps-btn"
+                    >
+                      <MapPin size={15} />
+                      <span>GPS</span>
+                    </button>
+
                     <button
                       type="button"
                       className="mat-sup-expand-btn"
