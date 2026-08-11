@@ -9,6 +9,12 @@ export default function SingleSelectDropdown({ options, selected, onSelect, plac
         value={selected || ''}
         onChange={(e) => onSelect(e.target.value)}
         variant="outlined"
+        renderValue={(value) => {
+          if (!value) {
+            return <span style={{ color: '#94a3b8' }}>{placeholder || 'Select...'}</span>;
+          }
+          return value;
+        }}
         sx={{
           borderRadius: '8px',
           backgroundColor: '#ffffff',
@@ -60,11 +66,6 @@ export default function SingleSelectDropdown({ options, selected, onSelect, plac
           },
         }}
       >
-        {placeholder && (
-          <MenuItem value="" disabled>
-            <span style={{ color: '#94a3b8' }}>{placeholder}</span>
-          </MenuItem>
-        )}
         {options.map((option, index) => (
           <MenuItem key={index} value={option}>
             {option}

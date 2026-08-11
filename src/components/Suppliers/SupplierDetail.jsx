@@ -87,6 +87,10 @@ export default function SupplierDetail() {
     businessType: '',
   });
 
+  const handleEmpFormChange = (key, value) => {
+    setEmpForm((prev) => ({ ...prev, [key]: value }));
+  };
+
   const [setupForm, setSetupForm] = useState({
     capacityPerMonth: supplier?.Capacity || '100',
     capacityUnit: 'KG',
@@ -484,7 +488,7 @@ export default function SupplierDetail() {
                 options={['Under 50', '50 - 100', '100 - 500', 'Over 500']}
                 selected={empForm.noOfEmployees}
                 placeholder="Select No. of Employee"
-                onSelect={(val) => handleEmpFormChange('noOfEmployees', val)}
+                onSelect={(val) => setEmpForm((prev) => ({ ...prev, noOfEmployees: val }))}
               />
             </div>
 
@@ -497,7 +501,7 @@ export default function SupplierDetail() {
                 options={['0%', '10% - 25%', '25% - 50%', 'Over 50%']}
                 selected={empForm.exportBusinessPct}
                 placeholder="Select % of Export Business"
-                onSelect={(val) => handleEmpFormChange('exportBusinessPct', val)}
+                onSelect={(val) => setEmpForm((prev) => ({ ...prev, exportBusinessPct: val }))}
               />
             </div>
 
@@ -510,7 +514,7 @@ export default function SupplierDetail() {
                 options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10 Years']}
                 selected={empForm.experienceInBusiness}
                 placeholder="Select Experience in Business"
-                onSelect={(val) => handleEmpFormChange('experienceInBusiness', val)}
+                onSelect={(val) => setEmpForm((prev) => ({ ...prev, experienceInBusiness: val }))}
               />
             </div>
 
@@ -523,7 +527,7 @@ export default function SupplierDetail() {
                 options={['0%', '10% - 25%', 'Over 25%', '50% - 75%', 'Over 75%']}
                 selected={empForm.europeBusinessPct}
                 placeholder="Select % of Business in Europe"
-                onSelect={(val) => handleEmpFormChange('europeBusinessPct', val)}
+                onSelect={(val) => setEmpForm((prev) => ({ ...prev, europeBusinessPct: val }))}
               />
             </div>
 
@@ -536,7 +540,7 @@ export default function SupplierDetail() {
                 options={['FOB', 'CIF', 'EXW', 'DDP', 'FCA']}
                 selected={empForm.shippingTerms}
                 placeholder="Select Shipping Terms"
-                onSelect={(val) => handleEmpFormChange('shippingTerms', val)}
+                onSelect={(val) => setEmpForm((prev) => ({ ...prev, shippingTerms: val }))}
               />
             </div>
 
@@ -549,7 +553,7 @@ export default function SupplierDetail() {
                 options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
                 selected={empForm.yearsInBusiness}
                 placeholder="Select Years in Business"
-                onSelect={(val) => handleEmpFormChange('yearsInBusiness', val)}
+                onSelect={(val) => setEmpForm((prev) => ({ ...prev, yearsInBusiness: val }))}
               />
             </div>
 
@@ -562,7 +566,7 @@ export default function SupplierDetail() {
                 options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
                 selected={empForm.yearsInEuropeBusiness}
                 placeholder="Select Years in European Business"
-                onSelect={(val) => handleEmpFormChange('yearsInEuropeBusiness', val)}
+                onSelect={(val) => setEmpForm((prev) => ({ ...prev, yearsInEuropeBusiness: val }))}
               />
             </div>
 
@@ -575,7 +579,7 @@ export default function SupplierDetail() {
                 options={['Manufacturer', 'Trader / Distributor', 'Agent', 'Exporter']}
                 selected={empForm.businessType}
                 placeholder="Select Business Type"
-                onSelect={(val) => handleEmpFormChange('businessType', val)}
+                onSelect={(val) => setEmpForm((prev) => ({ ...prev, businessType: val }))}
               />
             </div>
           </div>
