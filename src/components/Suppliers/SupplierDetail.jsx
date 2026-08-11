@@ -57,6 +57,25 @@ export default function SupplierDetail() {
   const supplierDomain = email.includes('@') ? email.split('@')[1] : 'lefarc.com';
   const supplierPrefix = name || 'LeFarc';
 
+  const teamMembers = [
+    {
+      name: 'Garnica Fernanda',
+      email: email || `mercadotecnia@${supplierDomain}`
+    },
+    {
+      name: `${supplierPrefix} Material`,
+      email: `material@${supplierDomain}`
+    },
+    {
+      name: `${supplierPrefix} Catalog`,
+      email: `catalog@${supplierDomain}`
+    },
+    {
+      name: `${supplierPrefix} Sales`,
+      email: `sales@${supplierDomain}`
+    }
+  ];
+
   const [empForm, setEmpForm] = useState({
     noOfEmployees: supplier?.NumberofEmployees || 'Over 500',
     exportBusinessPct: supplier?.ExporterBit || 'Over 50%',
