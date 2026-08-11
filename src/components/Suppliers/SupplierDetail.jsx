@@ -77,25 +77,15 @@ export default function SupplierDetail() {
   ];
 
   const [empForm, setEmpForm] = useState({
-    noOfEmployees: supplier?.NumberofEmployees || 'Over 500',
-    exportBusinessPct: supplier?.ExporterBit || 'Over 50%',
+    noOfEmployees: '',
+    exportBusinessPct: '',
     experienceInBusiness: '',
-    europeBusinessPct: 'Over 25%',
-    shippingTerms: 'FOB',
-    yearsInBusiness: 'Over 10',
-    yearsInEuropeBusiness: 'Over 10',
-    businessType: 'Manufacturer',
+    europeBusinessPct: '',
+    shippingTerms: '',
+    yearsInBusiness: '',
+    yearsInEuropeBusiness: '',
+    businessType: '',
   });
-
-  useEffect(() => {
-    if (supplier) {
-      setEmpForm((prev) => ({
-        ...prev,
-        noOfEmployees: supplier.NumberofEmployees || prev.noOfEmployees,
-        exportBusinessPct: supplier.ExporterBit || prev.exportBusinessPct,
-      }));
-    }
-  }, [supplier]);
 
   const [setupForm, setSetupForm] = useState({
     capacityPerMonth: supplier?.Capacity || '100',
@@ -493,6 +483,7 @@ export default function SupplierDetail() {
               <SingleSelectDropdown
                 options={['Under 50', '50 - 100', '100 - 500', 'Over 500']}
                 selected={empForm.noOfEmployees}
+                placeholder="Select No. of Employee"
                 onSelect={(val) => handleEmpFormChange('noOfEmployees', val)}
               />
             </div>
@@ -505,6 +496,7 @@ export default function SupplierDetail() {
               <SingleSelectDropdown
                 options={['0%', '10% - 25%', '25% - 50%', 'Over 50%']}
                 selected={empForm.exportBusinessPct}
+                placeholder="Select % of Export Business"
                 onSelect={(val) => handleEmpFormChange('exportBusinessPct', val)}
               />
             </div>
@@ -517,7 +509,7 @@ export default function SupplierDetail() {
               <SingleSelectDropdown
                 options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10 Years']}
                 selected={empForm.experienceInBusiness}
-                placeholder="Select Experience in Buisiness"
+                placeholder="Select Experience in Business"
                 onSelect={(val) => handleEmpFormChange('experienceInBusiness', val)}
               />
             </div>
@@ -530,6 +522,7 @@ export default function SupplierDetail() {
               <SingleSelectDropdown
                 options={['0%', '10% - 25%', 'Over 25%', '50% - 75%', 'Over 75%']}
                 selected={empForm.europeBusinessPct}
+                placeholder="Select % of Business in Europe"
                 onSelect={(val) => handleEmpFormChange('europeBusinessPct', val)}
               />
             </div>
@@ -542,6 +535,7 @@ export default function SupplierDetail() {
               <SingleSelectDropdown
                 options={['FOB', 'CIF', 'EXW', 'DDP', 'FCA']}
                 selected={empForm.shippingTerms}
+                placeholder="Select Shipping Terms"
                 onSelect={(val) => handleEmpFormChange('shippingTerms', val)}
               />
             </div>
@@ -554,6 +548,7 @@ export default function SupplierDetail() {
               <SingleSelectDropdown
                 options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
                 selected={empForm.yearsInBusiness}
+                placeholder="Select Years in Business"
                 onSelect={(val) => handleEmpFormChange('yearsInBusiness', val)}
               />
             </div>
@@ -566,6 +561,7 @@ export default function SupplierDetail() {
               <SingleSelectDropdown
                 options={['1 - 3 Years', '3 - 5 Years', '5 - 10 Years', 'Over 10']}
                 selected={empForm.yearsInEuropeBusiness}
+                placeholder="Select Years in European Business"
                 onSelect={(val) => handleEmpFormChange('yearsInEuropeBusiness', val)}
               />
             </div>
@@ -578,6 +574,7 @@ export default function SupplierDetail() {
               <SingleSelectDropdown
                 options={['Manufacturer', 'Trader / Distributor', 'Agent', 'Exporter']}
                 selected={empForm.businessType}
+                placeholder="Select Business Type"
                 onSelect={(val) => handleEmpFormChange('businessType', val)}
               />
             </div>
