@@ -1,7 +1,5 @@
 import CryptoJS from 'crypto-js';
-// import { VITE_ENCRYPTION_KEY } from 'src/config-global';
 
-// console.log(VITE_ENCRYPTION_KEY);
 const key = '$@ooMR783_23';
 
 // Pad the key to meet TripleDES requirements
@@ -9,49 +7,94 @@ const paddedKey = CryptoJS.enc.Utf8.parse(key.padEnd(24, ' '));
 
 const encrypt = (plainText) => {
   if (plainText == null) {
-    return null; // Return null if plainText is null or undefined
+    return null;
   }
 
-  // Check if plainText is an array
   if (Array.isArray(plainText)) {
-    // Convert array to string and join elements
     plainText = plainText.join(',');
   }
 
-  // Check if plainText is a boolean or number, convert it to string
   if (typeof plainText === 'boolean' || typeof plainText === 'number') {
     plainText = plainText.toString();
   }
 
-  const iv = CryptoJS.lib.WordArray.random(8); // Generate random IV
+  const iv = CryptoJS.lib.WordArray.random(8);
   const encrypted = CryptoJS.TripleDES.encrypt(plainText, paddedKey, {
     iv,
     mode: CryptoJS.mode.CBC,
     padding: CryptoJS.pad.Pkcs7,
   });
-  // Concatenate IV with encrypted data
   const encryptedWithIV = iv.concat(encrypted.ciphertext);
   return encryptedWithIV.toString(CryptoJS.enc.Base64);
 };
 
 const decrypt = (encryptedText) => {
   if (encryptedText == null) {
-    return null; // Return null if encryptedText is null or undefined
+    return null;
   }
 
-  const encryptedDataWithIV = CryptoJS.enc.Base64.parse(encryptedText);
-  const iv = encryptedDataWithIV.clone(); // IV is first 8 bytes
-  iv.sigBytes = 8;
-  iv.clamp();
-  const cipherText = encryptedDataWithIV.clone();
-  cipherText.words.splice(0, 2); // Remove IV from cipher text
-  cipherText.sigBytes -= 8;
-  const decrypted = CryptoJS.TripleDES.decrypt({ ciphertext: cipherText }, paddedKey, {
-    iv,
-    mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.Pkcs7,
-  });
-  return decrypted.toString(CryptoJS.enc.Utf8);
+  try {
+    const encryptedDataWithIV = CryptoJS.enc.Base64.parse(encryptedText);
+    const iv = encryptedDataWithIV.clone();
+    iv.sigBytes = 8;
+    iv.clamp();
+    const cipherText = encryptedDataWithIV.clone();
+    cipherText.words.splice(0, 2);
+    cipherText.sigBytes -= 8;
+    const decrypted = CryptoJS.TripleDES.decrypt({ ciphertext: cipherText }, paddedKey, {
+      iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  } catch (error) {
+    console.error('Decryption error:', error);
+    return encryptedText;
+  }
 };
 
-export { encrypt, decrypt };
+const decryptObjectKeys = (data) => {
+  if (!Array.isArray(data)) return [];
+
+  return data.map((item) => {
+    const decryptedItem = {};
+    Object.keys(item ?? {}).forEach((key) => {
+      const val = item[key];
+      if (typeof val === 'string' && val.trim() !== '') {
+        try {
+          decryptedItem[key] = decrypt(val);
+        } catch {
+          decryptedItem[key] = val;
+        }
+      } else {
+        decryptedItem[key] = val;
+      }
+    });
+    return decryptedItem;
+  });
+};
+
+const decryptRecursiveObjectKeys = (data) => {
+  if (Array.isArray(data)) {
+    return data.map((item) => decryptRecursiveObjectKeys(item));
+  }
+  if (typeof data === 'object' && data !== null) {
+    const decryptedItem = {};
+    Object.keys(data).forEach((key) => {
+      const val = data[key];
+      if (typeof val === 'string' && val.trim() !== '') {
+        try {
+          decryptedItem[key] = decrypt(val);
+        } catch {
+          decryptedItem[key] = val;
+        }
+      } else {
+        decryptedItem[key] = decryptRecursiveObjectKeys(val);
+      }
+    });
+    return decryptedItem;
+  }
+  return typeof data === 'string' && data.trim() !== '' ? decrypt(data) : data;
+};
+
+export { encrypt, decrypt, decryptObjectKeys, decryptRecursiveObjectKeys };

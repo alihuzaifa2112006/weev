@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, ArrowLeft, Layers, Package, ShieldCheck, Check } from 'lucide-react';
+import { decryptObjectKeys } from '../../api/encryption';
 import './SupplierDetail.css';
 
 export default function SupplierDetail() {
@@ -13,16 +14,16 @@ export default function SupplierDetail() {
 
   useEffect(() => {
     if (!supplier) {
-      // If navigated directly via URL, try fetching or fallback to mock supplier matching screenshot
       const fetchSupplier = async () => {
         try {
           const apiUrl = import.meta.env.VITE_API_URL || 'https://svitchapi.swtcloud.net/mapi/';
           const response = await fetch(`${apiUrl}GetSupplierData?UserID=265`);
           const data = await response.json();
           if (data.ServiceRes && data.ServiceRes.length > 0) {
-            const found = data.ServiceRes.find(
+            const decryptedList = decryptObjectKeys(data.ServiceRes);
+            const found = decryptedList.find(
               (s) => s.VenderLibraryID === id || s.SupplierCode === id
-            ) || data.ServiceRes[0];
+            ) || decryptedList[0];
             setSupplier(found);
           }
         } catch (err) {
@@ -35,42 +36,39 @@ export default function SupplierDetail() {
     }
   }, [id, supplier]);
 
-  // Display fields (fallback to screenshot defaults if API fields are encrypted/empty)
-  const name = (supplier && supplier.VenderName && supplier.VenderName.length < 30)
-    ? supplier.VenderName
-    : 'LeFarc';
+  // Display fields dynamically from decrypted API data (pure API values)
+  const name = supplier?.VenderName || supplier?.ShortName || '';
+  const country = [supplier?.City, supplier?.CountryName].filter(Boolean).join(', ');
+  const desc = supplier?.Desc || [supplier?.Address1, supplier?.Address2, country].filter(Boolean).join(', ');
+  const capacity = supplier?.Capacity || '';
+  const materials = supplier?.Type || supplier?.ProductCategoriesID || '';
+  const websiteUrl = supplier?.Website || '';
+  const email = supplier?.OnboardingEmail || '';
+  const address1 = supplier?.Address1 || '';
+  const city = [supplier?.City, supplier?.Province, supplier?.ZipCode, supplier?.CountryName].filter(Boolean).join(', ');
+  const phone = supplier?.PhoneNumber || '';
 
-  const country = (supplier && supplier.CountryName && supplier.CountryName.length < 30)
-    ? supplier.CountryName
-    : 'Mexico';
+  const supplierDomain = email.includes('@') ? email.split('@')[1] : 'lefarc.com';
+  const supplierPrefix = name || 'LeFarc';
 
-  const desc = (supplier && supplier.Desc && supplier.Desc.length < 100)
-    ? supplier.Desc
-    : 'Lefarc is a 100% Mexican tannery specializing in premium, sustainable leather for footwear, leather goods and upholstery. We export 85% of our production and have a presence in over 20 countries. Gold-certified by the LWG, we operate 4 production facilities with a monthly capacity of 2 million sqft.';
-
-  const capacity = (supplier && supplier.Capacity && supplier.Capacity !== '-')
-    ? supplier.Capacity
-    : '24000000 SF';
-
-  const websiteUrl = (supplier && supplier.Website && supplier.Website.length < 50 && !supplier.Website.includes('='))
-    ? supplier.Website
-    : 'https://lefarc.com/en/nuestra-esencia/';
-
-  const email = (supplier && supplier.OnboardingEmail && supplier.OnboardingEmail.length < 50 && !supplier.OnboardingEmail.includes('='))
-    ? supplier.OnboardingEmail
-    : 'mercadotecnia@lefarc.com';
-
-  const address1 = (supplier && supplier.Address1 && supplier.Address1.length < 50 && !supplier.Address1.includes('='))
-    ? supplier.Address1
-    : 'Av. Transportistas 301, Col. Unidad Obrera';
-
-  const city = (supplier && supplier.City && supplier.City.length < 50 && !supplier.City.includes('='))
-    ? supplier.City
-    : '37179 León de los Aldama, Gto., Mexico';
-
-  const phone = (supplier && supplier.PhoneNumber && supplier.PhoneNumber.length < 30 && !supplier.PhoneNumber.includes('='))
-    ? supplier.PhoneNumber
-    : '+52 477 470 2828';
+  const teamMembers = [
+    {
+      name: 'Garnica Fernanda',
+      email: email || `mercadotecnia@${supplierDomain}`
+    },
+    {
+      name: `${supplierPrefix} Material`,
+      email: `material@${supplierDomain}`
+    },
+    {
+      name: `${supplierPrefix} Catalog`,
+      email: `catalog@${supplierDomain}`
+    },
+    {
+      name: `${supplierPrefix} Sales`,
+      email: `sales@${supplierDomain}`
+    }
+  ];
 
   return (
     <div className="supplier-detail-page">
@@ -83,20 +81,26 @@ export default function SupplierDetail() {
       </div>
 
       {/* Hero Banner */}
-      <div className="supplier-hero-banner">
-        <div className="hero-overlay-text">Our Identity</div>
-      </div>
+      <div className="supplier-hero-banner"></div>
 
       {/* Profile Header Box */}
       <div className="supplier-profile-header-container">
         <div className="supplier-profile-header">
           <div className="profile-logo-box">
-            <span className="logo-text">LE FARC</span>
+            {supplier?.SupplierLogo || supplier?.imgOriginalLogo ? (
+              <img
+                src={supplier.SupplierLogo || supplier.imgOriginalLogo}
+                alt={name}
+                className="profile-logo-img"
+              />
+            ) : (
+              <span className="logo-text">{name ? name.toUpperCase() : 'LE FARC'}</span>
+            )}
           </div>
 
           <div className="profile-title-section">
-            <h1 className="profile-name">{name}</h1>
-            <p className="profile-location">{country}</p>
+            <h1 className="profile-name">{name || 'Supplier Detail'}</h1>
+            {country && <p className="profile-location">{country}</p>}
           </div>
 
           <div className="profile-actions">
@@ -129,7 +133,7 @@ export default function SupplierDetail() {
           <section className="story-section">
             <div className="story-left">
               <h2 className="section-heading">Our Story</h2>
-              <p className="story-desc">{desc}</p>
+              <p className="story-desc">{desc || 'No description available for this supplier.'}</p>
               
               <div className="cert-badge-box">
                 <div className="lwg-badge">
@@ -145,11 +149,7 @@ export default function SupplierDetail() {
             </div>
 
             <div className="story-right">
-              <div className="story-img-card">
-                <div className="story-img-overlay">
-                  <span>Our Identity</span>
-                </div>
-              </div>
+              <div className="story-img-card"></div>
             </div>
           </section>
 
@@ -162,7 +162,7 @@ export default function SupplierDetail() {
               <div className="glance-card">
                 <div className="glance-card-content">
                   <span className="glance-label">Materials</span>
-                  <div className="glance-value-primary">Leather</div>
+                  <div className="glance-value-primary">{materials || '-'}</div>
                 </div>
                 <div className="glance-icon-row">
                   <div className="swatch-icon">
@@ -177,9 +177,9 @@ export default function SupplierDetail() {
                 <div className="glance-card-content">
                   <span className="glance-label">Capacity</span>
                   <div className="glance-value-primary font-bold">
-                    {capacity} <span className="text-sm font-normal">SF</span>
+                    {capacity || '-'}
                   </div>
-                  <p className="glance-subtext">produced per year</p>
+                  {capacity && <p className="glance-subtext">produced per year</p>}
                 </div>
                 <div className="glance-icon-row">
                   <Package size={32} color="#111" />
@@ -253,8 +253,35 @@ export default function SupplierDetail() {
         </div>
       )}
 
-      {/* Tab Content for Catalog / Team */}
-      {activeTab !== 'Overview' && activeTab !== 'Contact' && (
+      {/* Tab Content: Team */}
+      {activeTab === 'Team' && (
+        <div className="team-tab-content">
+          <h2 className="section-heading">Our team</h2>
+
+          <div className="team-grid">
+            {teamMembers.map((member, index) => (
+              <div key={index} className="team-card">
+                <div className="team-avatar-placeholder">
+                  <span className="team-avatar-initial">
+                    {member.name ? member.name.charAt(0) : 'W'}
+                  </span>
+                </div>
+                <h3 className="team-member-name">{member.name}</h3>
+                <p className="team-member-email">
+                  Email: <a href={`mailto:${member.email}`}>{member.email}</a>
+                </p>
+                <button className="team-message-btn">
+                  <Mail size={14} />
+                  <span>Message</span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tab Content for Catalog */}
+      {activeTab !== 'Overview' && activeTab !== 'Contact' && activeTab !== 'Team' && (
         <div className="tab-placeholder-content">
           <h3>{activeTab} Section</h3>
           <p>Detailed {activeTab.toLowerCase()} information for {name} will be displayed here.</p>

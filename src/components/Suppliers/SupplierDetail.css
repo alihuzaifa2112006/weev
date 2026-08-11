@@ -32,9 +32,7 @@
 .supplier-hero-banner {
   width: 100%;
   height: 240px;
-  background: linear-gradient(135deg, #334155 0%, #1e293b 50%, #0f172a 100%);
-  background-image: radial-gradient(#475569 1px, transparent 1px);
-  background-size: 16px 16px;
+  background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45)), url('/identity.png') center/cover no-repeat;
   border-radius: 8px 8px 0 0;
   position: relative;
   display: flex;
@@ -78,10 +76,19 @@
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 1px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
   flex-shrink: 0;
   border-radius: 4px;
+  overflow: hidden;
+  text-align: center;
+  padding: 8px;
+}
+
+.profile-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .profile-title-section {
@@ -251,7 +258,7 @@
 .story-img-card {
   width: 100%;
   height: 260px;
-  background: linear-gradient(135deg, #475569 0%, #1e293b 100%);
+  background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.35)), url('/identity.png') center/cover no-repeat;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -422,4 +429,85 @@
 
 .hq-address-block .phone-line {
   margin-top: 8px;
+}
+
+/* Team Tab Styles */
+.team-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-left: 24px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  margin-top: 12px;
+}
+
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.team-avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+  background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.team-avatar-initial {
+  font-size: 32px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.team-member-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #09090b;
+  margin: 0 0 8px 0;
+}
+
+.team-member-email {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  width: 100%;
+}
+
+.team-member-email a {
+  color: #09090b;
+  text-decoration: underline;
+}
+
+.team-message-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #09090b;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #09090b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.team-message-btn:hover {
+  background-color: #f8fafc;
 }
