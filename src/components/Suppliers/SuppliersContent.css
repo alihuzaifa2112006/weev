@@ -178,8 +178,15 @@
 .supplier-card {
   background-color: #FFFFFF;
   border: 1px solid #E5E5E5;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 32px;
+  box-shadow: var(--weev-shadow-sm);
+  transition: transform var(--weev-transition-normal), box-shadow var(--weev-transition-normal);
+}
+
+.supplier-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--weev-shadow-lg);
 }
 
 .supplier-card-header {
@@ -191,14 +198,14 @@
 .supplier-logo-placeholder {
   font-size: 18px;
   font-weight: 800;
-  color: #111111;
-  background-color: #F3F4F6;
+  color: #D6E300;
+  background-color: #111111;
   width: 48px;
   height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .supplier-card-body {
@@ -218,6 +225,14 @@
   font-weight: 800;
   color: #111111;
   margin: 0;
+  transition: color var(--weev-transition-fast);
+}
+
+.supplier-name:hover {
+  color: #555555;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
 }
 
 .supplier-desc {
@@ -242,6 +257,7 @@
 
 .detail-label {
   color: #666666;
+  min-width: 120px;
 }
 
 .detail-value {
@@ -261,15 +277,60 @@
   background-color: transparent;
   border: 1px solid #D1D5DB;
   padding: 12px 32px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
   color: #111111;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--weev-transition-fast);
 }
 
 .load-more-btn:hover {
-  background-color: #F3F4F6;
-  border-color: #9CA3AF;
+  background-color: #111111;
+  color: #FFFFFF;
+  border-color: #111111;
+  box-shadow: var(--weev-shadow-md);
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .suppliers-filters {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .suppliers-page-wrapper {
+    padding: 24px 0;
+  }
+
+  .suppliers-container {
+    padding: 0 16px;
+  }
+
+  .suppliers-filters {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .suppliers-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .supplier-card-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .supplier-details {
+    padding-left: 0;
+    border-top: 1px solid #E5E5E5;
+    padding-top: 24px;
+  }
+
+  .supplier-card {
+    padding: 24px;
+  }
 }

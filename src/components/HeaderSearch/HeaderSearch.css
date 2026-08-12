@@ -146,3 +146,35 @@
 .weev-search-btn:active {
   transform: scale(0.98);
 }
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  .header-search-bar-wrapper {
+    padding: 12px 16px;
+  }
+
+  .header-search-container {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .search-input-field {
+    border-radius: 6px; /* Full border radius on mobile */
+    min-width: 100%;
+  }
+
+  .search-category-custom-wrapper {
+    margin-left: 0;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .search-category-selected {
+    border-radius: 6px;
+    border-left: 1px solid #71717A; /* Restore left border */
+  }
+
+  .weev-search-btn {
+    flex: 1;
+  }
+}

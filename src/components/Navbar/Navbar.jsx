@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, Bell, User, ShoppingBag } from 'lucide-react';
+import { ChevronDown, Bell, User, ShoppingBag, Menu, X } from 'lucide-react';
 import './Navbar.css';
 
 export default function Navbar({ setCartOpen }) {
@@ -8,6 +8,7 @@ export default function Navbar({ setCartOpen }) {
   const [materialsMenuOpen, setMaterialsMenuOpen] = useState(false);
   const [suppliersMenuOpen, setSuppliersMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(1);
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,6 +36,15 @@ export default function Navbar({ setCartOpen }) {
   return (
     <header className="weev-navbar-header">
       <div className="weev-navbar-container">
+        
+        {/* Mobile Menu Toggle Button */}
+        <button 
+          className="mobile-menu-btn" 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
         {/* Left: WEEV Brand & Workspace */}
         <div className="navbar-brand-section">
           <div className="weev-logo-wrapper" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
@@ -50,9 +60,9 @@ export default function Navbar({ setCartOpen }) {
             <span className="weev-logo-text">eev</span>
           </div>
 
-          <div className="brand-divider"></div>
+          <div className="brand-divider hide-on-mobile"></div>
 
-          <div className="workspace-selector" onClick={() => setWorkspaceMenuOpen(!workspaceMenuOpen)}>
+          <div className="workspace-selector hide-on-mobile" onClick={() => setWorkspaceMenuOpen(!workspaceMenuOpen)}>
             <span className="workspace-name">Weev design</span>
             <ChevronDown className={`dropdown-arrow ${workspaceMenuOpen ? 'open' : ''}`} size={16} strokeWidth={2.5} />
 
@@ -66,176 +76,190 @@ export default function Navbar({ setCartOpen }) {
           </div>
         </div>
 
-        <div className="vertical-divider section-divider"></div>
+        <div className={`navbar-collapse ${mobileMenuOpen ? 'show' : ''}`}>
+          <div className="vertical-divider section-divider hide-on-mobile"></div>
 
-        {/* Center: Main Navigation */}
-        <nav className="navbar-nav-links">
-          {navItems.map((item) => {
-            const isActive = activeTab === item.id;
-            return (
-              <div
-                key={item.id}
-                className={`nav-item-wrapper ${isActive ? 'active' : ''}`}
-                onMouseEnter={() => {
-                  if (item.id === 'Materials') setMaterialsMenuOpen(true);
-                  if (item.id === 'Suppliers') setSuppliersMenuOpen(true);
-                }}
-                onMouseLeave={() => {
-                  if (item.id === 'Materials') setMaterialsMenuOpen(false);
-                  if (item.id === 'Suppliers') setSuppliersMenuOpen(false);
-                }}
-                onClick={() => {
-                  if (!item.hasDropdown || item.id === 'Materials' || item.id === 'Suppliers') {
-                    if (item.id === 'My Dashboard') navigate('/');
-                    else if (item.id === 'Projects') navigate('/projects');
-                    else if (item.id === 'Materials') navigate('/materials');
-                    else if (item.id === 'Suppliers') navigate('/suppliers');
-                  }
-                }}
+          {/* Center: Main Navigation */}
+          <nav className="navbar-nav-links">
+            {navItems.map((item) => {
+              const isActive = activeTab === item.id;
+              return (
+                <div
+                  key={item.id}
+                  className={`nav-item-wrapper ${isActive ? 'active' : ''}`}
+                  onMouseEnter={() => {
+                    if (item.id === 'Materials') setMaterialsMenuOpen(true);
+                    if (item.id === 'Suppliers') setSuppliersMenuOpen(true);
+                  }}
+                  onMouseLeave={() => {
+                    if (item.id === 'Materials') setMaterialsMenuOpen(false);
+                    if (item.id === 'Suppliers') setSuppliersMenuOpen(false);
+                  }}
+                  onClick={() => {
+                    if (!item.hasDropdown || item.id === 'Materials' || item.id === 'Suppliers') {
+                      if (item.id === 'My Dashboard') navigate('/');
+                      else if (item.id === 'Projects') navigate('/projects');
+                      else if (item.id === 'Materials') navigate('/materials');
+                      else if (item.id === 'Suppliers') navigate('/suppliers');
+                      setMobileMenuOpen(false);
+                    }
+                  }}
+                >
+                  <span className="nav-link-text">{item.label}</span>
+                  {item.hasDropdown && (
+                    <ChevronDown
+                      size={15}
+                      className={`dropdown-arrow ${
+                        (item.id === 'Materials' && materialsMenuOpen) ||
+                        (item.id === 'Suppliers' && suppliersMenuOpen)
+                          ? 'open'
+                          : ''
+                      }`}
+                    />
+                  )}
+                  {isActive && <div className="active-nav-indicator" />}
+
+                  {/* Submenu for Materials (2-column layout) */}
+                  {item.id === 'Materials' && materialsMenuOpen && (
+                    <div className="materials-dropdown-menu">
+                      <div className="materials-dropdown-col left-col">
+                        <div className="materials-dropdown-item main-cat">Featured</div>
+                        <div className="materials-dropdown-item main-cat">Collections</div>
+                        <div className="materials-dropdown-item main-cat">From My Suppliers</div>
+                        <div 
+                          className="materials-dropdown-item main-cat"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/materials');
+                            setMaterialsMenuOpen(false);
+                            setMobileMenuOpen(false);
+                          }}
+                        >
+                          Browse All
+                        </div>
+                      </div>
+                      <div className="materials-dropdown-col right-col">
+                        <div className="materials-dropdown-item">Components, Outsoles, Insoles, Lasts</div>
+                        <div className="materials-dropdown-item">Finished and semi finished Goods</div>
+                        <div className="materials-dropdown-item">Hardware</div>
+                        <div className="materials-dropdown-item">Leather</div>
+                        <div className="materials-dropdown-item">Synthetics & Leather Alternatives</div>
+                        <div className="materials-dropdown-item">Textile</div>
+                        <div className="materials-dropdown-item">Threads, Yarns, Fibers</div>
+                        <div className="materials-dropdown-item">Trim and Accessory</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Submenu for Suppliers (2-column layout) */}
+                  {item.id === 'Suppliers' && suppliersMenuOpen && (
+                    <div className="materials-dropdown-menu">
+                      <div className="materials-dropdown-col left-col">
+                        <div className="materials-dropdown-item main-cat">Featured</div>
+                        <div className="materials-dropdown-item main-cat">My Suppliers</div>
+                        <div 
+                          className="materials-dropdown-item main-cat"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/suppliers');
+                            setSuppliersMenuOpen(false);
+                            setMobileMenuOpen(false);
+                          }}
+                        >
+                          Browse All
+                        </div>
+                      </div>
+                      <div className="materials-dropdown-col right-col">
+                        <div className="materials-dropdown-item">Components, Outsoles, Insoles, Lasts</div>
+                        <div className="materials-dropdown-item">Finished and semi finished Goods</div>
+                        <div className="materials-dropdown-item">Hardware</div>
+                        <div className="materials-dropdown-item">Leather</div>
+                        <div className="materials-dropdown-item">Synthetics & Leather Alternatives</div>
+                        <div className="materials-dropdown-item">Textile</div>
+                        <div className="materials-dropdown-item">Threads, Yarns, Fibers</div>
+                        <div className="materials-dropdown-item">Trim and Accessory</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+
+          <div className="vertical-divider section-divider hide-on-mobile"></div>
+
+          {/* Right: Actions (Notification, Profile, Cart/Bag) */}
+          <div className="navbar-actions-section">
+            {/* Notifications */}
+            <div className="nav-item-wrapper bell-nav-item" onClick={() => {
+              navigate('/alerts');
+              setNotificationCount(0);
+              setMobileMenuOpen(false);
+            }}>
+              <button
+                className="icon-action-btn notification-btn"
+                title="Notifications"
               >
-                <span className="nav-link-text">{item.label}</span>
-                {item.hasDropdown && (
-                  <ChevronDown
-                    size={15}
-                    className={`dropdown-arrow ${
-                      (item.id === 'Materials' && materialsMenuOpen) ||
-                      (item.id === 'Suppliers' && suppliersMenuOpen)
-                        ? 'open'
-                        : ''
-                    }`}
-                  />
-                )}
-                {isActive && <div className="active-nav-indicator" />}
+                <Bell size={20} className="action-icon" />
+                {notificationCount > 0 && <span className="notification-badge">{notificationCount}</span>}
+              </button>
+              {activeTab === 'Alerts' && <div className="active-nav-indicator" style={{bottom: '-12px'}} />}
+            </div>
 
-                {/* Submenu for Materials (2-column layout) */}
-                {item.id === 'Materials' && materialsMenuOpen && (
-                  <div className="materials-dropdown-menu">
-                    <div className="materials-dropdown-col left-col">
-                      <div className="materials-dropdown-item main-cat">Featured</div>
-                      <div className="materials-dropdown-item main-cat">Collections</div>
-                      <div className="materials-dropdown-item main-cat">From My Suppliers</div>
-                      <div 
-                        className="materials-dropdown-item main-cat"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate('/materials');
-                          setMaterialsMenuOpen(false);
-                        }}
-                      >
-                        Browse All
-                      </div>
-                    </div>
-                    <div className="materials-dropdown-col right-col">
-                      <div className="materials-dropdown-item">Components, Outsoles, Insoles, Lasts</div>
-                      <div className="materials-dropdown-item">Finished and semi finished Goods</div>
-                      <div className="materials-dropdown-item">Hardware</div>
-                      <div className="materials-dropdown-item">Leather</div>
-                      <div className="materials-dropdown-item">Synthetics & Leather Alternatives</div>
-                      <div className="materials-dropdown-item">Textile</div>
-                      <div className="materials-dropdown-item">Threads, Yarns, Fibers</div>
-                      <div className="materials-dropdown-item">Trim and Accessory</div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Submenu for Suppliers (2-column layout) */}
-                {item.id === 'Suppliers' && suppliersMenuOpen && (
-                  <div className="materials-dropdown-menu">
-                    <div className="materials-dropdown-col left-col">
-                      <div className="materials-dropdown-item main-cat">Featured</div>
-                      <div className="materials-dropdown-item main-cat">My Suppliers</div>
-                      <div 
-                        className="materials-dropdown-item main-cat"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate('/suppliers');
-                          setSuppliersMenuOpen(false);
-                        }}
-                      >
-                        Browse All
-                      </div>
-                    </div>
-                    <div className="materials-dropdown-col right-col">
-                      <div className="materials-dropdown-item">Components, Outsoles, Insoles, Lasts</div>
-                      <div className="materials-dropdown-item">Finished and semi finished Goods</div>
-                      <div className="materials-dropdown-item">Hardware</div>
-                      <div className="materials-dropdown-item">Leather</div>
-                      <div className="materials-dropdown-item">Synthetics & Leather Alternatives</div>
-                      <div className="materials-dropdown-item">Textile</div>
-                      <div className="materials-dropdown-item">Threads, Yarns, Fibers</div>
-                      <div className="materials-dropdown-item">Trim and Accessory</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-
-        <div className="vertical-divider section-divider"></div>
-
-        {/* Right: Actions (Notification, Profile, Cart/Bag) */}
-        <div className="navbar-actions-section">
-          {/* Notifications */}
-          <div className="nav-item-wrapper bell-nav-item" onClick={() => {
-            navigate('/alerts');
-            setNotificationCount(0);
-          }}>
-            <button
-              className="icon-action-btn notification-btn"
-              title="Notifications"
+            {/* User Account */}
+            <div 
+              className="nav-item-wrapper profile-nav-item" 
+              onMouseEnter={() => setUserMenuOpen(true)}
+              onMouseLeave={() => setUserMenuOpen(false)}
+              onClick={() => {
+                 if (window.innerWidth <= 1024) {
+                    setUserMenuOpen(!userMenuOpen);
+                 }
+              }}
             >
-              <Bell size={20} className="action-icon" />
-              {notificationCount > 0 && <span className="notification-badge">{notificationCount}</span>}
-            </button>
-            {activeTab === 'Alerts' && <div className="active-nav-indicator" style={{bottom: '-12px'}} />}
-          </div>
+              <button
+                className="icon-action-btn profile-btn"
+                title="User Account"
+              >
+                <User size={20} className="action-icon" />
+                <ChevronDown size={14} className="user-chevron" />
+              </button>
+              {(activeTab === 'Account' || userMenuOpen) && <div className="active-nav-indicator" style={{bottom: '-12px'}} />}
 
-          {/* User Account */}
-          <div 
-            className="nav-item-wrapper profile-nav-item" 
-            onMouseEnter={() => setUserMenuOpen(true)}
-            onMouseLeave={() => setUserMenuOpen(false)}
-          >
-            <button
-              className="icon-action-btn profile-btn"
-              title="User Account"
-            >
-              <User size={20} className="action-icon" />
-              <ChevronDown size={14} className="user-chevron" />
-            </button>
-            {(activeTab === 'Account' || userMenuOpen) && <div className="active-nav-indicator" style={{bottom: '-12px'}} />}
-
-            {userMenuOpen && (
-              <div className="mega-dropdown-menu">
-                <div className="mega-dropdown-columns">
-                  <div className="mega-col">
-                    <div className="mega-item" onClick={() => { navigate('/account'); setUserMenuOpen(false); }}>My Account</div>
-                    <div className="mega-item">My Company</div>
-                    <div className="mega-item">My Team</div>
+              {userMenuOpen && (
+                <div className="mega-dropdown-menu">
+                  <div className="mega-dropdown-columns">
+                    <div className="mega-col">
+                      <div className="mega-item" onClick={() => { navigate('/account'); setUserMenuOpen(false); setMobileMenuOpen(false); }}>My Account</div>
+                      <div className="mega-item">My Company</div>
+                      <div className="mega-item">My Team</div>
+                    </div>
+                    <div className="mega-col">
+                      <div className="mega-item">My Suppliers</div>
+                      <div className="mega-item">Orders</div>
+                    </div>
                   </div>
-                  <div className="mega-col">
-                    <div className="mega-item">My Suppliers</div>
-                    <div className="mega-item">Orders</div>
+                  <div className="mega-dropdown-footer">
+                    <div className="mega-item logout-item">Log out</div>
                   </div>
                 </div>
-                <div className="mega-dropdown-footer">
-                  <div className="mega-item logout-item">Log out</div>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            <div className="vertical-divider small-divider hide-on-mobile"></div>
+
+            {/* Shopping Bag */}
+            <button 
+              className="icon-action-btn cart-btn" 
+              title="Bag / Samples"
+              onClick={() => {
+                if (setCartOpen) setCartOpen(true);
+                setMobileMenuOpen(false);
+              }}
+            >
+              <ShoppingBag size={20} className="action-icon" />
+            </button>
           </div>
-
-          <div className="vertical-divider small-divider"></div>
-
-          {/* Shopping Bag */}
-          <button 
-            className="icon-action-btn cart-btn" 
-            title="Bag / Samples"
-            onClick={() => setCartOpen && setCartOpen(true)}
-          >
-            <ShoppingBag size={20} className="action-icon" />
-          </button>
         </div>
       </div>
     </header>
